@@ -1,0 +1,71 @@
+# Generate DayDayUP.xcodeproj with XcodeGen:  brew install xcodegen && xcodegen
+name: DayDayUP
+
+options:
+  bundleIdPrefix: com.example
+  createIntermediateGroups: true
+  deploymentTarget:
+    iOS: "18.0"
+    macOS: "12.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    DEVELOPMENT_TEAM: 2MP3LY4DXY    # your Apple Developer Team ID
+    CODE_SIGN_STYLE: Automatic
+    ENABLE_PREVIEWS: YES
+    ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+
+# Bundle identifiers keep the app's former name (VocaQuest) on purpose: changing them would give the
+# app a new, empty data container and lose the existing library, progress and dictionaries.
+targets:
+  DayDayUP-iOS:
+    type: application
+    platform: iOS
+    sources:
+      - path: DayDayUP
+    settings:
+      base:
+        PRODUCT_NAME: DayDayUP
+        PRODUCT_BUNDLE_IDENTIFIER: com.jr.vocaquest
+        TARGETED_DEVICE_FAMILY: "1,2"
+        CODE_SIGN_IDENTITY: "iPhone Developer"
+    info:
+      path: Generated/Info-iOS.plist
+      properties:
+        CFBundleDisplayName: DayDayUP
+        UILaunchScreen: {}
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: true
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UISupportedInterfaceOrientations~ipad:
+          [UIInterfaceOrientationPortrait, UIInterfaceOrientationPortraitUpsideDown,
+           UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
+        LSSupportsOpeningDocumentsInPlace: false
+        ITSAppUsesNonExemptEncryption: false
+
+  DayDayUP-macOS:
+    type: application
+    platform: macOS
+    sources:
+      - path: DayDayUP
+    settings:
+      base:
+        PRODUCT_NAME: DayDayUP
+        PRODUCT_BUNDLE_IDENTIFIER: com.js.vocaquest.mac
+        # The Translation framework only exists on macOS 15+; weak-link it so the app still launches on macOS 12–14.
+        OTHER_LDFLAGS: ["-weak_framework", "Translation"]
+    info:
+      path: Generated/Info-macOS.plist
+      properties:
+        CFBundleDisplayName: DayDayUP
+        LSApplicationCategoryType: public.app-category.education
+        ITSAppUsesNonExemptEncryption: false
+    entitlements:
+      path: Generated/DayDayUP-macOS.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.network.client: true
+        com.apple.security.files.user-selected.read-write: true

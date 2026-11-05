@@ -1,0 +1,713 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		012126307CCB2A7CAAE91172 /* DictionaryBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33F64BD660CA9A62E6A07397 /* DictionaryBuilder.swift */; };
+		089AF790F6334DCADD26F640 /* Gamification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DB367C16872406AE45ACDA4 /* Gamification.swift */; };
+		1A71116AB0BA9C86985190AE /* SyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8613C97F5472D7D452E5401 /* SyncService.swift */; };
+		1AFCDBFA11F0C0BCE6C60D0C /* LocalDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5158D30A0F63DA03908AB383 /* LocalDictionary.swift */; };
+		1E7EE62DCD02A2C605970D9E /* ReviewSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 075DDB15D27081C0895397C1 /* ReviewSchedule.swift */; };
+		224592981432A84372469B4B /* ReminderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA64622E6DF02D764144D6A3 /* ReminderService.swift */; };
+		3429F213D2702B291B2ADD30 /* Entities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51682F9F6A8D4BB03A5D2EA4 /* Entities.swift */; };
+		3C2C9226C06D822E10618C16 /* Languages.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDA457A721B98FEE9A53E17 /* Languages.swift */; };
+		3D7B56A1BBCDA6CFD9640827 /* Flashcards.swift in Sources */ = {isa = PBXBuildFile; fileRef = B04822BCD4CCDAF5D0A7F071 /* Flashcards.swift */; };
+		4317BF1A9323CC28EC35EC9E /* StudyModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2EA0927C5D70A2076E4518D /* StudyModels.swift */; };
+		469E039FC73BCAC55824B74A /* VocabRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ADDA70BC8109DECF2717D2 /* VocabRepository.swift */; };
+		4BAF7D4865068686109CED2E /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B12A84901A494A46570CC85 /* SettingsView.swift */; };
+		516B1F5F777AE4EA9166E1F2 /* DictionaryBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33F64BD660CA9A62E6A07397 /* DictionaryBuilder.swift */; };
+		51AB975855CBEA838808CCD6 /* ImportExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFCBF275BE219D244764786A /* ImportExport.swift */; };
+		57F8043585D9AAA772466A32 /* DictionaryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49553E8E0EC525DE1117CBB1 /* DictionaryManager.swift */; };
+		5D33B7C5141A5BF87884C3FF /* SyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8613C97F5472D7D452E5401 /* SyncService.swift */; };
+		5D714980263EC592E499C072 /* Quiz.swift in Sources */ = {isa = PBXBuildFile; fileRef = F796F3DD5B02DD9265515BE5 /* Quiz.swift */; };
+		5E843A87A84F16AF41A92F04 /* ProgressPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2ACDEC201027684D5CAAF6 /* ProgressPage.swift */; };
+		612102C0170B50905E400176 /* QuizEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C8C66418244535200DD4A9A /* QuizEngine.swift */; };
+		6400D8A8ACF278794B2BC302 /* SpeechService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A956A6487D8B50CB0E738CB0 /* SpeechService.swift */; };
+		672C611801C4E819AB29DC33 /* DictionaryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49553E8E0EC525DE1117CBB1 /* DictionaryManager.swift */; };
+		6DA15FB64A1B1A1FBB492050 /* OnlineSources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DF628A565A3537173A7CF4 /* OnlineSources.swift */; };
+		73F2AB3BC5B2722540B3AD84 /* ReviewSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 075DDB15D27081C0895397C1 /* ReviewSchedule.swift */; };
+		7581451DD9C8B756EF0660C9 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93CECA0D18EBB7EADF67AC9A /* RootView.swift */; };
+		7590269E67E41D9771548AD5 /* LibraryState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 369F7993BA17699B57C7D326 /* LibraryState.swift */; };
+		7651E37FB3E271DFB97E1BDD /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93CECA0D18EBB7EADF67AC9A /* RootView.swift */; };
+		7955C471978147CFE1BC5F70 /* ManageSheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD426D4581AE3836CC6AE74 /* ManageSheets.swift */; };
+		79C16C1982CA8CED93E6197F /* ManagedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDBE0D77C39C5C603FE7EE6 /* ManagedModel.swift */; };
+		7A8EDC3AF5435E287C0A5797 /* WordEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9433121AABEC59000C69B10F /* WordEditorView.swift */; };
+		81D1047EEA290FF91BEF6B56 /* WordListTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EA5CDCFB90E2DE2CEF84321 /* WordListTarget.swift */; };
+		884C6075B015FE162ACC618C /* AddWord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453666B30BFF71B908EECF67 /* AddWord.swift */; };
+		941B0FE54E7B07A6A6B764E4 /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10033AEDC7489A8624FD4577 /* TodayView.swift */; };
+		995AC26F00646B532D89F6C8 /* WordListScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE97C0B84E5B19688196C4E /* WordListScreen.swift */; };
+		99C3B7D0FCBCDDF5FB1962D2 /* TodayPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E32820548F4DEF5BE0DEE6 /* TodayPlanner.swift */; };
+		A9B0D282F964D96658DB0924 /* QuizEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C8C66418244535200DD4A9A /* QuizEngine.swift */; };
+		AC10BEE09FD7B35C042FFC72 /* AddWord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453666B30BFF71B908EECF67 /* AddWord.swift */; };
+		AF77984E9E5A5A4BC36F92F5 /* OnlineSources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DF628A565A3537173A7CF4 /* OnlineSources.swift */; };
+		B06D4C985E824C63FA02D757 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0843A93A906A0F0B103273A7 /* Assets.xcassets */; };
+		B1D820BE871F21F32CCE5AC2 /* DayDayUPApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23627B44956EC1D8F3CBA4F /* DayDayUPApp.swift */; };
+		B55B521E13D4F194D602A25E /* ProgressPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2ACDEC201027684D5CAAF6 /* ProgressPage.swift */; };
+		B62F6712F6DA45164A8AE75F /* StudyModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2EA0927C5D70A2076E4518D /* StudyModels.swift */; };
+		B6F4664A8D5347D6DCCD3F4F /* ManagedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDBE0D77C39C5C603FE7EE6 /* ManagedModel.swift */; };
+		B7D5E45892167592963C6C72 /* LibraryState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 369F7993BA17699B57C7D326 /* LibraryState.swift */; };
+		BA1EB346EFE6B733AA4DD5F4 /* ManageSheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD426D4581AE3836CC6AE74 /* ManageSheets.swift */; };
+		C024961C6FA741D027CC9377 /* Flashcards.swift in Sources */ = {isa = PBXBuildFile; fileRef = B04822BCD4CCDAF5D0A7F071 /* Flashcards.swift */; };
+		C05864C76B539F2E72CC2A1E /* WordEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9433121AABEC59000C69B10F /* WordEditorView.swift */; };
+		C0DF57AF12D69467B1DE685B /* Gamification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DB367C16872406AE45ACDA4 /* Gamification.swift */; };
+		C17385A2769FD6222091BD0A /* LookupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1989297EA7AA5C02EF8EEAB /* LookupService.swift */; };
+		C5C31F1112CC3743DC64BA80 /* WordListTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EA5CDCFB90E2DE2CEF84321 /* WordListTarget.swift */; };
+		C6CFD8E0333E53D1D6017F55 /* ReminderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA64622E6DF02D764144D6A3 /* ReminderService.swift */; };
+		C7B1A4AF44A577B71B71825B /* Quiz.swift in Sources */ = {isa = PBXBuildFile; fileRef = F796F3DD5B02DD9265515BE5 /* Quiz.swift */; };
+		CA1AE94B13E60230F1C5BDFF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0843A93A906A0F0B103273A7 /* Assets.xcassets */; };
+		CBAC0744888AD1F5DF0864A6 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B12A84901A494A46570CC85 /* SettingsView.swift */; };
+		CDD3113E6CE5CAD7D9659110 /* VocabRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84ADDA70BC8109DECF2717D2 /* VocabRepository.swift */; };
+		CEE063910D09381026888FC0 /* Entities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51682F9F6A8D4BB03A5D2EA4 /* Entities.swift */; };
+		D34DB4C7350068BC7E480C91 /* Languages.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDA457A721B98FEE9A53E17 /* Languages.swift */; };
+		D834898769BACA335D13C74C /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 073D6DFA3A3573826DDCC3C3 /* DesignSystem.swift */; };
+		DA9D3BEFC603597C7E0B9FA8 /* DayDayUPApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23627B44956EC1D8F3CBA4F /* DayDayUPApp.swift */; };
+		E58CCE0E2EB93511A5AB3446 /* WordListScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE97C0B84E5B19688196C4E /* WordListScreen.swift */; };
+		EDBEC350C6437C0D3B5FEAE2 /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 073D6DFA3A3573826DDCC3C3 /* DesignSystem.swift */; };
+		F29C5BA35F4F1DC753158837 /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10033AEDC7489A8624FD4577 /* TodayView.swift */; };
+		F4A7E61832B4C2C04D9305D2 /* SpeechService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A956A6487D8B50CB0E738CB0 /* SpeechService.swift */; };
+		FB2CBB5D5CD0E72F2C1C070F /* ImportExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFCBF275BE219D244764786A /* ImportExport.swift */; };
+		FCE67E94C914C5D45C8A3723 /* TodayPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E32820548F4DEF5BE0DEE6 /* TodayPlanner.swift */; };
+		FFA9093D9D31878352AA5C4E /* LookupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1989297EA7AA5C02EF8EEAB /* LookupService.swift */; };
+		FFF6391EB568D4DF0D8207BD /* LocalDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5158D30A0F63DA03908AB383 /* LocalDictionary.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		073D6DFA3A3573826DDCC3C3 /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
+		075DDB15D27081C0895397C1 /* ReviewSchedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSchedule.swift; sourceTree = "<group>"; };
+		0843A93A906A0F0B103273A7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		10033AEDC7489A8624FD4577 /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
+		33F64BD660CA9A62E6A07397 /* DictionaryBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryBuilder.swift; sourceTree = "<group>"; };
+		369F7993BA17699B57C7D326 /* LibraryState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryState.swift; sourceTree = "<group>"; };
+		3B12A84901A494A46570CC85 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		3BE97C0B84E5B19688196C4E /* WordListScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordListScreen.swift; sourceTree = "<group>"; };
+		453666B30BFF71B908EECF67 /* AddWord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWord.swift; sourceTree = "<group>"; };
+		49553E8E0EC525DE1117CBB1 /* DictionaryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryManager.swift; sourceTree = "<group>"; };
+		4C2ACDEC201027684D5CAAF6 /* ProgressPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressPage.swift; sourceTree = "<group>"; };
+		4C8C66418244535200DD4A9A /* QuizEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizEngine.swift; sourceTree = "<group>"; };
+		5158D30A0F63DA03908AB383 /* LocalDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDictionary.swift; sourceTree = "<group>"; };
+		51682F9F6A8D4BB03A5D2EA4 /* Entities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entities.swift; sourceTree = "<group>"; };
+		6DB367C16872406AE45ACDA4 /* Gamification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gamification.swift; sourceTree = "<group>"; };
+		7E90AB68184B87B7FBB292D4 /* DayDayUP-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DayDayUP-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7EA5CDCFB90E2DE2CEF84321 /* WordListTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordListTarget.swift; sourceTree = "<group>"; };
+		84ADDA70BC8109DECF2717D2 /* VocabRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VocabRepository.swift; sourceTree = "<group>"; };
+		85DF628A565A3537173A7CF4 /* OnlineSources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineSources.swift; sourceTree = "<group>"; };
+		93CECA0D18EBB7EADF67AC9A /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		9433121AABEC59000C69B10F /* WordEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordEditorView.swift; sourceTree = "<group>"; };
+		A956A6487D8B50CB0E738CB0 /* SpeechService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechService.swift; sourceTree = "<group>"; };
+		B04822BCD4CCDAF5D0A7F071 /* Flashcards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Flashcards.swift; sourceTree = "<group>"; };
+		B1777426DE193528582BA025 /* DayDayUP-iOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "DayDayUP-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BFCBF275BE219D244764786A /* ImportExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportExport.swift; sourceTree = "<group>"; };
+		DA64622E6DF02D764144D6A3 /* ReminderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderService.swift; sourceTree = "<group>"; };
+		DFD426D4581AE3836CC6AE74 /* ManageSheets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageSheets.swift; sourceTree = "<group>"; };
+		E1989297EA7AA5C02EF8EEAB /* LookupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LookupService.swift; sourceTree = "<group>"; };
+		E23627B44956EC1D8F3CBA4F /* DayDayUPApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayDayUPApp.swift; sourceTree = "<group>"; };
+		E2EA0927C5D70A2076E4518D /* StudyModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyModels.swift; sourceTree = "<group>"; };
+		E8613C97F5472D7D452E5401 /* SyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncService.swift; sourceTree = "<group>"; };
+		EBDBE0D77C39C5C603FE7EE6 /* ManagedModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedModel.swift; sourceTree = "<group>"; };
+		ECDA457A721B98FEE9A53E17 /* Languages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Languages.swift; sourceTree = "<group>"; };
+		F5E32820548F4DEF5BE0DEE6 /* TodayPlanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayPlanner.swift; sourceTree = "<group>"; };
+		F796F3DD5B02DD9265515BE5 /* Quiz.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Quiz.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		15C64FE0157877A46039124C /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				6DB367C16872406AE45ACDA4 /* Gamification.swift */,
+				ECDA457A721B98FEE9A53E17 /* Languages.swift */,
+				369F7993BA17699B57C7D326 /* LibraryState.swift */,
+				4C8C66418244535200DD4A9A /* QuizEngine.swift */,
+				DA64622E6DF02D764144D6A3 /* ReminderService.swift */,
+				075DDB15D27081C0895397C1 /* ReviewSchedule.swift */,
+				E2EA0927C5D70A2076E4518D /* StudyModels.swift */,
+				F5E32820548F4DEF5BE0DEE6 /* TodayPlanner.swift */,
+				7EA5CDCFB90E2DE2CEF84321 /* WordListTarget.swift */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		16F4839C3BADFE9C401CD161 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				E23627B44956EC1D8F3CBA4F /* DayDayUPApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		170488C4968A4FDC8F26E444 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				453666B30BFF71B908EECF67 /* AddWord.swift */,
+				DFD426D4581AE3836CC6AE74 /* ManageSheets.swift */,
+				9433121AABEC59000C69B10F /* WordEditorView.swift */,
+				3BE97C0B84E5B19688196C4E /* WordListScreen.swift */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
+		1AD9D879EE9A189C1DFD48EF /* DayDayUP */ = {
+			isa = PBXGroup;
+			children = (
+				0843A93A906A0F0B103273A7 /* Assets.xcassets */,
+				16F4839C3BADFE9C401CD161 /* App */,
+				BC39085D990919F326CA8A26 /* DesignSystem */,
+				F0BDEDD10B2BF450B19F7736 /* Dictionary */,
+				15C64FE0157877A46039124C /* Domain */,
+				980B67B245BE59DAF64FF91D /* Features */,
+				B5F63D52A11F3F847D269536 /* ImportExport */,
+				2380BEDAEEA6015D94E557D5 /* Persistence */,
+				77D06AFFCF4CE6694A74E108 /* Speech */,
+				36DAC7DDFBB5F2171A4426AB /* Sync */,
+			);
+			path = DayDayUP;
+			sourceTree = "<group>";
+		};
+		2380BEDAEEA6015D94E557D5 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				51682F9F6A8D4BB03A5D2EA4 /* Entities.swift */,
+				EBDBE0D77C39C5C603FE7EE6 /* ManagedModel.swift */,
+				84ADDA70BC8109DECF2717D2 /* VocabRepository.swift */,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
+		36DAC7DDFBB5F2171A4426AB /* Sync */ = {
+			isa = PBXGroup;
+			children = (
+				E8613C97F5472D7D452E5401 /* SyncService.swift */,
+			);
+			path = Sync;
+			sourceTree = "<group>";
+		};
+		378E4D5342390BE5B6F2127D /* Progress */ = {
+			isa = PBXGroup;
+			children = (
+				4C2ACDEC201027684D5CAAF6 /* ProgressPage.swift */,
+			);
+			path = Progress;
+			sourceTree = "<group>";
+		};
+		38F2BA455F543C7D283F904E = {
+			isa = PBXGroup;
+			children = (
+				1AD9D879EE9A189C1DFD48EF /* DayDayUP */,
+				EDBBC0BA0DCA54C8D8BD3E3C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		77D06AFFCF4CE6694A74E108 /* Speech */ = {
+			isa = PBXGroup;
+			children = (
+				A956A6487D8B50CB0E738CB0 /* SpeechService.swift */,
+			);
+			path = Speech;
+			sourceTree = "<group>";
+		};
+		869DCD9F239F2589E8AAA176 /* Root */ = {
+			isa = PBXGroup;
+			children = (
+				93CECA0D18EBB7EADF67AC9A /* RootView.swift */,
+			);
+			path = Root;
+			sourceTree = "<group>";
+		};
+		9607C90B55F90190F6C42A0F /* Today */ = {
+			isa = PBXGroup;
+			children = (
+				10033AEDC7489A8624FD4577 /* TodayView.swift */,
+			);
+			path = Today;
+			sourceTree = "<group>";
+		};
+		980B67B245BE59DAF64FF91D /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				170488C4968A4FDC8F26E444 /* Library */,
+				378E4D5342390BE5B6F2127D /* Progress */,
+				869DCD9F239F2589E8AAA176 /* Root */,
+				E9A9BD6D678B48E599326B7D /* Settings */,
+				C143DCF15333F648F201D14E /* Study */,
+				9607C90B55F90190F6C42A0F /* Today */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		B5F63D52A11F3F847D269536 /* ImportExport */ = {
+			isa = PBXGroup;
+			children = (
+				BFCBF275BE219D244764786A /* ImportExport.swift */,
+			);
+			path = ImportExport;
+			sourceTree = "<group>";
+		};
+		BC39085D990919F326CA8A26 /* DesignSystem */ = {
+			isa = PBXGroup;
+			children = (
+				073D6DFA3A3573826DDCC3C3 /* DesignSystem.swift */,
+			);
+			path = DesignSystem;
+			sourceTree = "<group>";
+		};
+		C143DCF15333F648F201D14E /* Study */ = {
+			isa = PBXGroup;
+			children = (
+				B04822BCD4CCDAF5D0A7F071 /* Flashcards.swift */,
+				F796F3DD5B02DD9265515BE5 /* Quiz.swift */,
+			);
+			path = Study;
+			sourceTree = "<group>";
+		};
+		E9A9BD6D678B48E599326B7D /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				3B12A84901A494A46570CC85 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		EDBBC0BA0DCA54C8D8BD3E3C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B1777426DE193528582BA025 /* DayDayUP-iOS.app */,
+				7E90AB68184B87B7FBB292D4 /* DayDayUP-macOS.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F0BDEDD10B2BF450B19F7736 /* Dictionary */ = {
+			isa = PBXGroup;
+			children = (
+				33F64BD660CA9A62E6A07397 /* DictionaryBuilder.swift */,
+				49553E8E0EC525DE1117CBB1 /* DictionaryManager.swift */,
+				5158D30A0F63DA03908AB383 /* LocalDictionary.swift */,
+				E1989297EA7AA5C02EF8EEAB /* LookupService.swift */,
+				85DF628A565A3537173A7CF4 /* OnlineSources.swift */,
+			);
+			path = Dictionary;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		68410029790FA6D4F2B524E1 /* DayDayUP-macOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8383DC8DABD8A50A98FAF2E6 /* Build configuration list for PBXNativeTarget "DayDayUP-macOS" */;
+			buildPhases = (
+				702ACBF85F2479EC08EFFB8F /* Sources */,
+				04F5880B34480992DFB8427F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "DayDayUP-macOS";
+			packageProductDependencies = (
+			);
+			productName = "DayDayUP-macOS";
+			productReference = 7E90AB68184B87B7FBB292D4 /* DayDayUP-macOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		7DCA121882D7846E5BAF3517 /* DayDayUP-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8B2ABFD872F39E6C5F67A111 /* Build configuration list for PBXNativeTarget "DayDayUP-iOS" */;
+			buildPhases = (
+				75E94D3B630A880ABEE330F0 /* Sources */,
+				83651D600E430F163DF03DA1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "DayDayUP-iOS";
+			packageProductDependencies = (
+			);
+			productName = "DayDayUP-iOS";
+			productReference = B1777426DE193528582BA025 /* DayDayUP-iOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		16F8CC6A0AA4D05B52D71573 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					68410029790FA6D4F2B524E1 = {
+						DevelopmentTeam = 2MP3LY4DXY;
+						ProvisioningStyle = Automatic;
+					};
+					7DCA121882D7846E5BAF3517 = {
+						DevelopmentTeam = 2MP3LY4DXY;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = C4EB28706A46056A33675FDB /* Build configuration list for PBXProject "DayDayUP" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 38F2BA455F543C7D283F904E;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = EDBBC0BA0DCA54C8D8BD3E3C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				7DCA121882D7846E5BAF3517 /* DayDayUP-iOS */,
+				68410029790FA6D4F2B524E1 /* DayDayUP-macOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		04F5880B34480992DFB8427F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B06D4C985E824C63FA02D757 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		83651D600E430F163DF03DA1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CA1AE94B13E60230F1C5BDFF /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		702ACBF85F2479EC08EFFB8F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				884C6075B015FE162ACC618C /* AddWord.swift in Sources */,
+				B1D820BE871F21F32CCE5AC2 /* DayDayUPApp.swift in Sources */,
+				D834898769BACA335D13C74C /* DesignSystem.swift in Sources */,
+				516B1F5F777AE4EA9166E1F2 /* DictionaryBuilder.swift in Sources */,
+				57F8043585D9AAA772466A32 /* DictionaryManager.swift in Sources */,
+				CEE063910D09381026888FC0 /* Entities.swift in Sources */,
+				C024961C6FA741D027CC9377 /* Flashcards.swift in Sources */,
+				089AF790F6334DCADD26F640 /* Gamification.swift in Sources */,
+				51AB975855CBEA838808CCD6 /* ImportExport.swift in Sources */,
+				3C2C9226C06D822E10618C16 /* Languages.swift in Sources */,
+				B7D5E45892167592963C6C72 /* LibraryState.swift in Sources */,
+				1AFCDBFA11F0C0BCE6C60D0C /* LocalDictionary.swift in Sources */,
+				C17385A2769FD6222091BD0A /* LookupService.swift in Sources */,
+				BA1EB346EFE6B733AA4DD5F4 /* ManageSheets.swift in Sources */,
+				B6F4664A8D5347D6DCCD3F4F /* ManagedModel.swift in Sources */,
+				AF77984E9E5A5A4BC36F92F5 /* OnlineSources.swift in Sources */,
+				5E843A87A84F16AF41A92F04 /* ProgressPage.swift in Sources */,
+				C7B1A4AF44A577B71B71825B /* Quiz.swift in Sources */,
+				612102C0170B50905E400176 /* QuizEngine.swift in Sources */,
+				C6CFD8E0333E53D1D6017F55 /* ReminderService.swift in Sources */,
+				73F2AB3BC5B2722540B3AD84 /* ReviewSchedule.swift in Sources */,
+				7581451DD9C8B756EF0660C9 /* RootView.swift in Sources */,
+				4BAF7D4865068686109CED2E /* SettingsView.swift in Sources */,
+				F4A7E61832B4C2C04D9305D2 /* SpeechService.swift in Sources */,
+				B62F6712F6DA45164A8AE75F /* StudyModels.swift in Sources */,
+				1A71116AB0BA9C86985190AE /* SyncService.swift in Sources */,
+				FCE67E94C914C5D45C8A3723 /* TodayPlanner.swift in Sources */,
+				F29C5BA35F4F1DC753158837 /* TodayView.swift in Sources */,
+				CDD3113E6CE5CAD7D9659110 /* VocabRepository.swift in Sources */,
+				7A8EDC3AF5435E287C0A5797 /* WordEditorView.swift in Sources */,
+				995AC26F00646B532D89F6C8 /* WordListScreen.swift in Sources */,
+				C5C31F1112CC3743DC64BA80 /* WordListTarget.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		75E94D3B630A880ABEE330F0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AC10BEE09FD7B35C042FFC72 /* AddWord.swift in Sources */,
+				DA9D3BEFC603597C7E0B9FA8 /* DayDayUPApp.swift in Sources */,
+				EDBEC350C6437C0D3B5FEAE2 /* DesignSystem.swift in Sources */,
+				012126307CCB2A7CAAE91172 /* DictionaryBuilder.swift in Sources */,
+				672C611801C4E819AB29DC33 /* DictionaryManager.swift in Sources */,
+				3429F213D2702B291B2ADD30 /* Entities.swift in Sources */,
+				3D7B56A1BBCDA6CFD9640827 /* Flashcards.swift in Sources */,
+				C0DF57AF12D69467B1DE685B /* Gamification.swift in Sources */,
+				FB2CBB5D5CD0E72F2C1C070F /* ImportExport.swift in Sources */,
+				D34DB4C7350068BC7E480C91 /* Languages.swift in Sources */,
+				7590269E67E41D9771548AD5 /* LibraryState.swift in Sources */,
+				FFF6391EB568D4DF0D8207BD /* LocalDictionary.swift in Sources */,
+				FFA9093D9D31878352AA5C4E /* LookupService.swift in Sources */,
+				7955C471978147CFE1BC5F70 /* ManageSheets.swift in Sources */,
+				79C16C1982CA8CED93E6197F /* ManagedModel.swift in Sources */,
+				6DA15FB64A1B1A1FBB492050 /* OnlineSources.swift in Sources */,
+				B55B521E13D4F194D602A25E /* ProgressPage.swift in Sources */,
+				5D714980263EC592E499C072 /* Quiz.swift in Sources */,
+				A9B0D282F964D96658DB0924 /* QuizEngine.swift in Sources */,
+				224592981432A84372469B4B /* ReminderService.swift in Sources */,
+				1E7EE62DCD02A2C605970D9E /* ReviewSchedule.swift in Sources */,
+				7651E37FB3E271DFB97E1BDD /* RootView.swift in Sources */,
+				CBAC0744888AD1F5DF0864A6 /* SettingsView.swift in Sources */,
+				6400D8A8ACF278794B2BC302 /* SpeechService.swift in Sources */,
+				4317BF1A9323CC28EC35EC9E /* StudyModels.swift in Sources */,
+				5D33B7C5141A5BF87884C3FF /* SyncService.swift in Sources */,
+				99C3B7D0FCBCDDF5FB1962D2 /* TodayPlanner.swift in Sources */,
+				941B0FE54E7B07A6A6B764E4 /* TodayView.swift in Sources */,
+				469E039FC73BCAC55824B74A /* VocabRepository.swift in Sources */,
+				C05864C76B539F2E72CC2A1E /* WordEditorView.swift in Sources */,
+				E58CCE0E2EB93511A5AB3446 /* WordListScreen.swift in Sources */,
+				81D1047EEA290FF91BEF6B56 /* WordListTarget.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		33D53DE1902F99FE00EADE39 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = "Generated/Info-iOS.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jr.vocaquest;
+				PRODUCT_NAME = DayDayUP;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		36BD13D0C1B9B969C185F7C2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Generated/DayDayUP-macOS.entitlements";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "Generated/Info-macOS.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					Translation,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.js.vocaquest.mac;
+				PRODUCT_NAME = DayDayUP;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		9DA8F3FC1FA3BD4E0E11A5D2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = "Generated/Info-iOS.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jr.vocaquest;
+				PRODUCT_NAME = DayDayUP;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		A8049640E62F8621228AD992 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 2MP3LY4DXY;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		B698E292E1548E781C02FBA2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 2MP3LY4DXY;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		DB52D93AD4B793EBCDE8E61B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Generated/DayDayUP-macOS.entitlements";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "Generated/Info-macOS.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					Translation,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.js.vocaquest.mac;
+				PRODUCT_NAME = DayDayUP;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8383DC8DABD8A50A98FAF2E6 /* Build configuration list for PBXNativeTarget "DayDayUP-macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				36BD13D0C1B9B969C185F7C2 /* Debug */,
+				DB52D93AD4B793EBCDE8E61B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8B2ABFD872F39E6C5F67A111 /* Build configuration list for PBXNativeTarget "DayDayUP-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				33D53DE1902F99FE00EADE39 /* Debug */,
+				9DA8F3FC1FA3BD4E0E11A5D2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C4EB28706A46056A33675FDB /* Build configuration list for PBXProject "DayDayUP" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B698E292E1548E781C02FBA2 /* Debug */,
+				A8049640E62F8621228AD992 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 16F8CC6A0AA4D05B52D71573 /* Project object */;
+}

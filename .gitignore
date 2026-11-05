@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+
+# Xcode per-user state and build output
+xcuserdata/
+*.xcuserstate
+DerivedData/
+build/
+dist/
+
+# Raw dictionary downloads (large, third-party; the app downloads them itself)
+sources/
+
+# Leftover project from before the rename (the project is DayDayUP.xcodeproj)
+VocaQuest.xcodeproj/
