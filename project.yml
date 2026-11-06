@@ -11,8 +11,8 @@ options:
 settings:
   base:
     SWIFT_VERSION: "5.0"
-    MARKETING_VERSION: "1.0"
-    CURRENT_PROJECT_VERSION: "1"
+    MARKETING_VERSION: "1.1"
+    CURRENT_PROJECT_VERSION: "2"
     DEVELOPMENT_TEAM: 2MP3LY4DXY    # your Apple Developer Team ID
     CODE_SIGN_STYLE: Automatic
     ENABLE_PREVIEWS: YES
@@ -36,6 +36,8 @@ targets:
       path: Generated/Info-iOS.plist
       properties:
         CFBundleDisplayName: DayDayUP
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         UILaunchScreen: {}
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: true
@@ -61,6 +63,8 @@ targets:
       path: Generated/Info-macOS.plist
       properties:
         CFBundleDisplayName: DayDayUP
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSApplicationCategoryType: public.app-category.education
         ITSAppUsesNonExemptEncryption: false
     entitlements:
