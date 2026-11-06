@@ -65,6 +65,8 @@ struct DictEntry {
 final class LocalDictionary {
     let id: DictionaryID
     private let db: SQLiteDatabase
+    /// Whether the file has sound keys for "sounds like" suggestions (ECDICT format 2 and later).
+    private let hasSounds: Bool
 
     init(id: DictionaryID, path: String) throws {
         self.id = id
@@ -72,6 +74,7 @@ final class LocalDictionary {
         // Validate the schema early so a wrong file fails at import, not at lookup.
         _ = try db.query("SELECT headword, reading, senses, rank FROM entries LIMIT 1")
         _ = try db.query("SELECT form, entry_id FROM forms LIMIT 1")
+        hasSounds = !((try? db.query("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'sounds'")) ?? []).isEmpty
     }
 
     var entryCount: Int {
@@ -98,47 +101,96 @@ final class LocalDictionary {
         }
     }
 
-    /// Words that start with what was typed, plus near-misses for typos (Question 2.3).
+    /// The version of the file's layout (ECDICT: see `DictionaryBuilder.ecdictFormat`); 1 for older files.
+    var format: Int {
+        guard let rows = try? db.query("SELECT value FROM meta WHERE key = 'format'"),
+              let value = rows.first?.first ?? nil else { return 1 }
+        return Int(value) ?? 1
+    }
+
+    /// Similar words for something the dictionary doesn't have (see LOOKUP_AND_REFERENCE.md):
+    /// spelling neighbours and sound-alikes first, then words that start with what was typed.
+    /// In ECDICT, rare words (rank above 60k) only show when no common word matches.
     func suggestions(for form: String, limit: Int = 10) -> [String] {
         guard !form.isEmpty else { return [] }
-        let escaped = form.replacingOccurrences(of: "\\", with: "\\\\")
-            .replacingOccurrences(of: "%", with: "\\%")
-            .replacingOccurrences(of: "_", with: "\\_")
-        var results: [String] = []
+        func escape(_ text: String) -> String {
+            text.replacingOccurrences(of: "\\", with: "\\\\")
+                .replacingOccurrences(of: "%", with: "\\%")
+                .replacingOccurrences(of: "_", with: "\\_")
+        }
+        struct Candidate { let form: String; let distance: Int; let rank: Int }
+        let length = form.count
+        let maxDistance = length <= 4 ? 1 : 2
 
         // 1. Completions of what was typed.
         let prefixSQL = """
             SELECT f.form, MIN(e.rank) AS r FROM forms f JOIN entries e ON e.id = f.entry_id
             WHERE f.form LIKE ? ESCAPE '\\' AND f.form != ? GROUP BY f.form ORDER BY r LIMIT ?
             """
-        for row in (try? db.query(prefixSQL, [.text(escaped + "%"), .text(form), .int(limit)])) ?? [] {
-            if let f = row[0] { results.append(f) }
-        }
+        let completions = ((try? db.query(prefixSQL, [.text(escape(form) + "%"), .text(form), .int(limit * 3)])) ?? [])
+            .compactMap { row -> Candidate? in
+                guard let f = row[0] else { return nil }
+                return Candidate(form: f, distance: 0, rank: Int(row[1] ?? "") ?? Int.max)
+            }
 
-        // 2. Spelling neighbours: same first character, similar length, edit distance ≤ 2.
-        let first = String(form.prefix(1)).replacingOccurrences(of: "%", with: "\\%").replacingOccurrences(of: "_", with: "\\_")
-        let length = form.count
+        // 2. Spelling neighbours: same first character, similar length, few mistakes.
         let fuzzySQL = """
             SELECT f.form, MIN(e.rank) AS r FROM forms f JOIN entries e ON e.id = f.entry_id
             WHERE f.form LIKE ? ESCAPE '\\' AND length(f.form) BETWEEN ? AND ?
             GROUP BY f.form ORDER BY r LIMIT 4000
             """
-        let rows = (try? db.query(fuzzySQL, [.text(first + "%"), .int(max(1, length - 2)), .int(length + 2)])) ?? []
-        let scored = rows.compactMap { row -> (String, Int, Int)? in
-            guard let candidate = row[0], candidate != form else { return nil }
+        let rows = (try? db.query(fuzzySQL, [.text(escape(String(form.prefix(1))) + "%"),
+                                             .int(max(1, length - 2)), .int(length + 2)])) ?? []
+        var near: [String: Candidate] = [:]
+        for row in rows {
+            guard let candidate = row[0], candidate != form else { continue }
             let distance = Self.editDistance(form, candidate)
-            guard distance <= (length <= 4 ? 1 : 2) else { return nil }
-            return (candidate, distance, Int(row[1] ?? "") ?? Int.max)
+            guard distance <= maxDistance else { continue }
+            near[candidate] = Candidate(form: candidate, distance: distance, rank: Int(row[1] ?? "") ?? Int.max)
         }
-        .sorted { ($0.1, $0.2) < ($1.1, $1.2) }
 
-        for (candidate, _, _) in scored where !results.contains(candidate) {
-            results.append(candidate)
+        // 3. Sounds-like matches (English): same sound key. Any first letter, so kat finds cat.
+        //    A short key (KT) matches too much, so it needs a near spelling as well; a longer key
+        //    (NLJ) also brings in common words spelled quite differently (nolij → knowledge),
+        //    ranked like a word with the most mistakes allowed.
+        if hasSounds {
+            let key = SoundKey.make(form)
+            if key.count >= 2 {
+                let soundRows = (try? db.query("SELECT form, MIN(rank) FROM sounds WHERE key = ? GROUP BY form ORDER BY MIN(rank) LIMIT 60",
+                                               [.text(key)])) ?? []
+                var soundOnly = 0
+                for row in soundRows {
+                    guard let candidate = row[0], candidate != form, near[candidate] == nil else { continue }
+                    let rank = Int(row[1] ?? "") ?? Int.max
+                    let distance = Self.editDistance(form, candidate)
+                    if distance <= maxDistance {
+                        near[candidate] = Candidate(form: candidate, distance: distance, rank: rank)
+                    } else if key.count >= 3, rank <= DictionaryBuilder.ecdictMaxRank, soundOnly < 3 {
+                        soundOnly += 1
+                        near[candidate] = Candidate(form: candidate, distance: maxDistance, rank: rank)
+                    }
+                }
+            }
         }
-        // Near-misses first when the prefix list is crowded with long completions.
-        let fuzzy = scored.map(\.0)
-        let ordered = fuzzy.prefix(5) + results.filter { !fuzzy.prefix(5).contains($0) }
-        return Array(ordered.prefix(limit))
+
+        // Rare words step aside when a common one matches (ECDICT has real frequency ranks).
+        let filterRare = id == .ecdict
+        func isRare(_ c: Candidate) -> Bool { filterRare && c.rank > DictionaryBuilder.ecdictMaxRank }
+        let pool = Array(near.values) + completions
+        let hideRare = filterRare && pool.contains { !isRare($0) }
+        let keep: (Candidate) -> Bool = { !hideRare || !isRare($0) }
+
+        let nearOrdered = near.values.filter(keep)
+            .sorted { ($0.distance, $0.rank, $0.form) < ($1.distance, $1.rank, $1.form) }
+            .map(\.form)
+        let completionOrdered = completions.filter(keep).map(\.form)
+
+        // Near-misses first (up to 5), then completions, then the remaining near-misses.
+        var results: [String] = []
+        for word in nearOrdered.prefix(5) + completionOrdered + nearOrdered.dropFirst(5) where !results.contains(word) {
+            results.append(word)
+        }
+        return Array(results.prefix(limit))
     }
 
     /// Random common senses, used to top up quiz distractors when a table is small.
@@ -147,18 +199,24 @@ final class LocalDictionary {
         return rows.flatMap { Self.decodeSenses($0[0]) }
     }
 
+    /// Edit distance where two swapped neighbouring letters count as one mistake (recieve → receive).
     static func editDistance(_ a: String, _ b: String) -> Int {
         let a = Array(a), b = Array(b)
         if a.isEmpty { return b.count }
         if b.isEmpty { return a.count }
-        var previous = Array(0...b.count)
+        var before = [Int](repeating: 0, count: b.count + 1)   // row i-2
+        var previous = Array(0...b.count)                      // row i-1
         var current = [Int](repeating: 0, count: b.count + 1)
         for i in 1...a.count {
             current[0] = i
             for j in 1...b.count {
-                current[j] = min(previous[j] + 1, current[j - 1] + 1, previous[j - 1] + (a[i - 1] == b[j - 1] ? 0 : 1))
+                var value = min(previous[j] + 1, current[j - 1] + 1, previous[j - 1] + (a[i - 1] == b[j - 1] ? 0 : 1))
+                if i > 1, j > 1, a[i - 1] == b[j - 2], a[i - 2] == b[j - 1] {
+                    value = min(value, before[j - 2] + 1)
+                }
+                current[j] = value
             }
-            swap(&previous, &current)
+            (before, previous, current) = (previous, current, before)
         }
         return previous[b.count]
     }

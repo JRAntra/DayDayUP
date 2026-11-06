@@ -13,6 +13,7 @@
 		1AFCDBFA11F0C0BCE6C60D0C /* LocalDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5158D30A0F63DA03908AB383 /* LocalDictionary.swift */; };
 		1E7EE62DCD02A2C605970D9E /* ReviewSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 075DDB15D27081C0895397C1 /* ReviewSchedule.swift */; };
 		224592981432A84372469B4B /* ReminderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA64622E6DF02D764144D6A3 /* ReminderService.swift */; };
+		266C5C360D2D8890AFC12AD9 /* SoundKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27C5BB9EEC6E14BE45B7E84F /* SoundKey.swift */; };
 		3429F213D2702B291B2ADD30 /* Entities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51682F9F6A8D4BB03A5D2EA4 /* Entities.swift */; };
 		3C2C9226C06D822E10618C16 /* Languages.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECDA457A721B98FEE9A53E17 /* Languages.swift */; };
 		3D7B56A1BBCDA6CFD9640827 /* Flashcards.swift in Sources */ = {isa = PBXBuildFile; fileRef = B04822BCD4CCDAF5D0A7F071 /* Flashcards.swift */; };
@@ -22,6 +23,7 @@
 		516B1F5F777AE4EA9166E1F2 /* DictionaryBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33F64BD660CA9A62E6A07397 /* DictionaryBuilder.swift */; };
 		51AB975855CBEA838808CCD6 /* ImportExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFCBF275BE219D244764786A /* ImportExport.swift */; };
 		57F8043585D9AAA772466A32 /* DictionaryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49553E8E0EC525DE1117CBB1 /* DictionaryManager.swift */; };
+		5C8874E3B01FC00029F03F4B /* SoundKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27C5BB9EEC6E14BE45B7E84F /* SoundKey.swift */; };
 		5D33B7C5141A5BF87884C3FF /* SyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8613C97F5472D7D452E5401 /* SyncService.swift */; };
 		5D714980263EC592E499C072 /* Quiz.swift in Sources */ = {isa = PBXBuildFile; fileRef = F796F3DD5B02DD9265515BE5 /* Quiz.swift */; };
 		5E843A87A84F16AF41A92F04 /* ProgressPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2ACDEC201027684D5CAAF6 /* ProgressPage.swift */; };
@@ -80,6 +82,7 @@
 		075DDB15D27081C0895397C1 /* ReviewSchedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSchedule.swift; sourceTree = "<group>"; };
 		0843A93A906A0F0B103273A7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		10033AEDC7489A8624FD4577 /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
+		27C5BB9EEC6E14BE45B7E84F /* SoundKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundKey.swift; sourceTree = "<group>"; };
 		33F64BD660CA9A62E6A07397 /* DictionaryBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryBuilder.swift; sourceTree = "<group>"; };
 		369F7993BA17699B57C7D326 /* LibraryState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryState.swift; sourceTree = "<group>"; };
 		3B12A84901A494A46570CC85 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -287,6 +290,7 @@
 				5158D30A0F63DA03908AB383 /* LocalDictionary.swift */,
 				E1989297EA7AA5C02EF8EEAB /* LookupService.swift */,
 				85DF628A565A3537173A7CF4 /* OnlineSources.swift */,
+				27C5BB9EEC6E14BE45B7E84F /* SoundKey.swift */,
 			);
 			path = Dictionary;
 			sourceTree = "<group>";
@@ -416,6 +420,7 @@
 				73F2AB3BC5B2722540B3AD84 /* ReviewSchedule.swift in Sources */,
 				7581451DD9C8B756EF0660C9 /* RootView.swift in Sources */,
 				4BAF7D4865068686109CED2E /* SettingsView.swift in Sources */,
+				266C5C360D2D8890AFC12AD9 /* SoundKey.swift in Sources */,
 				F4A7E61832B4C2C04D9305D2 /* SpeechService.swift in Sources */,
 				B62F6712F6DA45164A8AE75F /* StudyModels.swift in Sources */,
 				1A71116AB0BA9C86985190AE /* SyncService.swift in Sources */,
@@ -455,6 +460,7 @@
 				1E7EE62DCD02A2C605970D9E /* ReviewSchedule.swift in Sources */,
 				7651E37FB3E271DFB97E1BDD /* RootView.swift in Sources */,
 				CBAC0744888AD1F5DF0864A6 /* SettingsView.swift in Sources */,
+				5C8874E3B01FC00029F03F4B /* SoundKey.swift in Sources */,
 				6400D8A8ACF278794B2BC302 /* SpeechService.swift in Sources */,
 				4317BF1A9323CC28EC35EC9E /* StudyModels.swift in Sources */,
 				5D33B7C5141A5BF87884C3FF /* SyncService.swift in Sources */,

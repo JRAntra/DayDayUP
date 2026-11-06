@@ -158,14 +158,16 @@ final class GamificationService: ObservableObject {
 
     func rememberedCount() -> Int {
         let request = NSFetchRequest<WordMO>(entityName: "WordMO")
-        request.predicate = NSPredicate(format: "deletedAt == nil AND step >= %d AND inReview == NO", ReviewSchedule.rememberedStep)
+        request.predicate = VocabRepository.reviewableOnly(
+            NSPredicate(format: "deletedAt == nil AND step >= %d AND inReview == NO", ReviewSchedule.rememberedStep))
         return (try? context.count(for: request)) ?? 0
     }
 
     /// Reviews due today or earlier, across every pair.
     func dueCount() -> Int {
         let request = NSFetchRequest<WordMO>(entityName: "WordMO")
-        request.predicate = NSPredicate(format: "deletedAt == nil AND step > 0 AND (dueDay == nil OR dueDay <= %@)", DayKey.today)
+        request.predicate = VocabRepository.reviewableOnly(
+            NSPredicate(format: "deletedAt == nil AND step > 0 AND (dueDay == nil OR dueDay <= %@)", DayKey.today))
         return (try? context.count(for: request)) ?? 0
     }
 

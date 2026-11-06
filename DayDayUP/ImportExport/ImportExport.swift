@@ -35,7 +35,11 @@ struct CSVDocument: FileDocument {
 /// The same record shapes are the intended wire format for a future custom sync backend.
 struct BackupFile: Codable {
     struct Pair: Codable { var id: UUID; var from: String; var to: String; var script: String; var accent: String; var sortIndex: Int64; var createdAt: Date? }
-    struct Category: Codable { var id: UUID; var pairID: UUID; var name: String; var sortIndex: Int64; var createdAt: Date? }
+    struct Category: Codable {
+        var id: UUID; var pairID: UUID; var name: String; var sortIndex: Int64; var createdAt: Date?
+        /// Added in backup version 4.
+        var referenceOnly: Bool? = nil
+    }
     struct Folder: Codable { var id: UUID; var categoryID: UUID; var name: String; var sortIndex: Int64; var createdAt: Date? }
     struct Word: Codable {
         var id: UUID; var categoryID: UUID; var folderID: UUID?
@@ -59,7 +63,8 @@ struct BackupFile: Codable {
     var format = "vocaquest-backup"
     /// 2 added the review schedule (word step / due day / started day, and the streak flag per day).
     /// 3 added the daily answer counts per language pair.
-    var version = 3
+    /// 4 added reference-only categories.
+    var version = 4
     var exportedAt = Date()
     var pairs: [Pair] = []
     var categories: [Category] = []
@@ -88,7 +93,8 @@ enum BackupService {
         }
         file.categories = all(CategoryMO.self).compactMap { c -> BackupFile.Category? in
             guard let pairID = c.pair?.id else { return nil }
-            return .init(id: c.uuid, pairID: pairID, name: c.displayName, sortIndex: c.sortIndex, createdAt: c.createdAt)
+            return .init(id: c.uuid, pairID: pairID, name: c.displayName, sortIndex: c.sortIndex, createdAt: c.createdAt,
+                         referenceOnly: c.referenceOnly)
         }
         file.folders = all(FolderMO.self).compactMap { f -> BackupFile.Folder? in
             guard let categoryID = f.category?.id else { return nil }
@@ -160,6 +166,7 @@ enum BackupService {
             let category = CategoryMO(context: context)
             category.id = c.id; category.createdAt = c.createdAt ?? Date(); category.updatedAt = Date()
             category.name = c.name; category.sortIndex = c.sortIndex; category.pair = pair
+            category.referenceOnly = c.referenceOnly ?? false
             categories[c.id] = category
         }
         var folders: [UUID: FolderMO] = [:]

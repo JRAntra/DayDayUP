@@ -36,6 +36,9 @@ struct WordListScreen: View {
     var body: some View {
         VStack(spacing: 0) {
             FilterBar(filter: $filter, target: target, expanded: $showFilters)
+            if let category = target.category, category.referenceOnly {
+                ReferenceOnlyNote(category: category)
+            }
             if let pair = target.pair, !dictionaries.isInstalled(pair.from.dictionary), !library.isBannerHidden(for: pair) {
                 MissingDictionaryBanner(dictionary: pair.from.dictionary, pair: pair)
             }
@@ -49,9 +52,15 @@ struct WordListScreen: View {
         .onAppear { library.recordOpened(target) }
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
-                Button { launchStudy() } label: { Label("Study", systemImage: "graduationcap.fill") }
-                    .help("Quiz or flashcards on the words shown")
+                if target.category?.referenceOnly != true {
+                    Button { launchStudy() } label: { Label("Study", systemImage: "graduationcap.fill") }
+                        .help("Quiz or flashcards on the words shown")
+                }
                 Menu {
+                    if let category = target.category {
+                        ReferenceOnlyToggle(category: category)
+                        Divider()
+                    }
                     Button { exportCSV() } label: { Label("Export table as CSV", systemImage: "square.and.arrow.up") }
                     if target.category != nil {
                         Button { showImporter = true } label: { Label("Import CSV into this category", systemImage: "square.and.arrow.down") }
@@ -97,9 +106,12 @@ struct WordListScreen: View {
     }
 
     private func launchStudy() {
-        let words = repository.words(matching: filter)
+        let shown = repository.words(matching: filter)
+        let words = shown.filter(\.isReviewable)
         guard !words.isEmpty else {
-            message = "There are no words here yet. Add some words or change the filters."
+            message = shown.isEmpty
+                ? "There are no words here yet. Add some words or change the filters."
+                : "These words are all in reference-only categories, so there's nothing to study."
             return
         }
         study = StudyLaunch(words: words, accent: accent)
@@ -321,12 +333,17 @@ struct WordResults: View {
         HSplitView {
             Table(sortedWords, selection: $selection, sortOrder: $sortOrder) {
                 TableColumn("Progress", value: \.stepValue) { word in
-                    ProgressRing(step: Int(word.step), inReview: word.inReview, accent: word.pair?.accent ?? target.accent, size: 20)
+                    if word.isReviewable {
+                        ProgressRing(step: Int(word.step), inReview: word.inReview, accent: word.pair?.accent ?? target.accent, size: 20)
+                    } else {
+                        Image(systemName: "book.closed").foregroundColor(Palette.ink.opacity(0.45)).help("Reference only")
+                    }
                 }
                 .width(min: 56, ideal: 64, max: 72)
                 TableColumn("Next review", value: \.daysUntilDue) { word in
-                    Text(word.dueText)
-                        .foregroundColor(word.isDue ? Palette.tangerine : Palette.ink.opacity(word.isNew ? 0.45 : 0.8))
+                    Text(word.isReviewable ? word.dueText : "Reference")
+                        .foregroundColor(word.isReviewable && word.isDue ? Palette.tangerine
+                                         : Palette.ink.opacity(word.isNew || !word.isReviewable ? 0.45 : 0.8))
                 }
                 .width(min: 70, ideal: 90)
                 TableColumn("Word", value: \.termValue) { word in
@@ -416,7 +433,13 @@ struct WordRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            ProgressRing(step: Int(word.step), inReview: word.inReview, accent: accent, size: 28)
+            if word.isReviewable {
+                ProgressRing(step: Int(word.step), inReview: word.inReview, accent: accent, size: 28)
+            } else {
+                Image(systemName: "book.closed").font(.system(size: 18)).foregroundColor(Palette.ink.opacity(0.4))
+                    .frame(width: 28, height: 28)
+                    .accessibilityLabel("Reference only")
+            }
             VStack(alignment: .leading, spacing: 3) {
                 HStack(alignment: .firstTextBaseline, spacing: 6) {
                     Text(word.termValue).font(Typeface.title(18)).foregroundColor(Palette.ink)
@@ -424,9 +447,9 @@ struct WordRow: View {
                         Text(word.readingValue).font(Typeface.body(13)).foregroundColor(Palette.ink.opacity(0.55))
                     }
                     Spacer(minLength: 4)
-                    Text(word.dueText)
+                    Text(word.isReviewable ? word.dueText : "Reference")
                         .font(Typeface.label(11))
-                        .foregroundColor(word.isDue ? Palette.tangerine : Palette.ink.opacity(0.45))
+                        .foregroundColor(word.isReviewable && word.isDue ? Palette.tangerine : Palette.ink.opacity(0.45))
                 }
                 if let primary = word.primarySense {
                     HStack(spacing: 6) {
@@ -531,3 +554,28 @@ struct TableDeleteKeyMonitor: NSViewRepresentable {
     }
 }
 #endif
+
+/// Shown at the top of a reference-only list.
+private struct ReferenceOnlyNote: View {
+    @ObservedObject var category: CategoryMO
+    @EnvironmentObject private var repository: VocabRepository
+    @EnvironmentObject private var reminders: ReminderService
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "book.closed.fill").foregroundColor(Palette.ink.opacity(0.55))
+            Text("Reference only: these words are kept for looking up and are never reviewed.")
+                .font(Typeface.body(13)).foregroundColor(Palette.ink.opacity(0.7))
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 4)
+            Button("Review them") {
+                repository.setReferenceOnly(category, false)
+                Task { await reminders.refresh() }
+            }
+                .font(Typeface.label(13))
+                .buttonStyle(.borderless)
+        }
+        .padding(.horizontal, 16).padding(.vertical, 8)
+        .background(Palette.surfaceSunken)
+    }
+}

@@ -35,13 +35,7 @@ struct ManageSheet: View {
                 // Scrolls, so the hidden-pair list and the form both fit in a half-height sheet.
                 ScrollView { NewPairForm().padding(.vertical, 4) }
             case .newCategory(let pair):
-                NameForm(title: "New category in \(pair.title)", placeholder: "Category name, e.g. Medicine",
-                         suggestions: repository.allCategoryNames().filter { name in
-                             !pair.liveCategories.contains { $0.displayName.caseInsensitiveCompare(name) == .orderedSame }
-                         },
-                         actionTitle: "Create category") { name in
-                    _ = try repository.createCategory(named: name, in: pair)
-                }
+                NewCategoryForm(pair: pair)
             case .newFolder(let category):
                 NameForm(title: "New folder in \(category.displayName)", placeholder: "Folder name, e.g. Chapter 3",
                          actionTitle: "Create folder") { name in
@@ -142,6 +136,8 @@ private struct NameForm: View {
     var suggestions: [String] = []
     let actionTitle: String
     let perform: (String) throws -> Void
+    /// Extra controls shown under the name, e.g. the reference-only switch.
+    var extra: AnyView?
 
     @Environment(\.dismiss) private var dismiss
     @State private var name = ""
@@ -156,6 +152,12 @@ private struct NameForm: View {
         self.actionTitle = actionTitle
         self.perform = perform
         _name = State(initialValue: initial)
+    }
+
+    init<Extra: View>(title: String, placeholder: String, suggestions: [String] = [], actionTitle: String,
+                      perform: @escaping (String) throws -> Void, @ViewBuilder extra: () -> Extra) {
+        self.init(title: title, placeholder: placeholder, suggestions: suggestions, actionTitle: actionTitle, perform: perform)
+        self.extra = AnyView(extra())
     }
 
     var body: some View {
@@ -176,6 +178,7 @@ private struct NameForm: View {
                     }
                 }
             }
+            if let extra { extra }
             if let error { Text(error).font(Typeface.body(14)).foregroundColor(Palette.cherry) }
             HStack {
                 Button("Cancel") { dismiss() }.buttonStyle(OutlineChunkyButtonStyle())
@@ -313,5 +316,31 @@ struct CSVImportSheet: View {
         .padding(24)
         .macSheetSize(minWidth: 460)
         .background(Palette.background.ignoresSafeArea())
+    }
+}
+
+/// A category name, plus whether its words are reviewed or only kept for reference.
+private struct NewCategoryForm: View {
+    let pair: LanguagePairMO
+    @EnvironmentObject private var repository: VocabRepository
+    @State private var referenceOnly = false
+
+    var body: some View {
+        NameForm(title: "New category in \(pair.title)", placeholder: "Category name, e.g. Medicine",
+                 suggestions: repository.allCategoryNames().filter { name in
+                     !pair.liveCategories.contains { $0.displayName.caseInsensitiveCompare(name) == .orderedSame }
+                 },
+                 actionTitle: "Create category") { name in
+            _ = try repository.createCategory(named: name, in: pair, referenceOnly: referenceOnly)
+        } extra: {
+            Toggle(isOn: $referenceOnly) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Reference only").font(Typeface.label(15))
+                    Text("For technical terms and tool names you want to keep and look up, but not review.")
+                        .font(Typeface.body(13)).foregroundColor(Palette.ink.opacity(0.6))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
     }
 }

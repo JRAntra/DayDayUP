@@ -34,7 +34,8 @@ struct RootView: View {
 
 /// Words due today or earlier, for tab and sidebar badges.
 func dueWordsRequest() -> NSFetchRequest<WordMO> {
-    Fetch.words(NSPredicate(format: "deletedAt == nil AND step > 0 AND (dueDay == nil OR dueDay <= %@)", DayKey.today))
+    Fetch.words(VocabRepository.reviewableOnly(
+        NSPredicate(format: "deletedAt == nil AND step > 0 AND (dueDay == nil OR dueDay <= %@)", DayKey.today)))
 }
 
 /// Slides in when an achievement unlocks anywhere in the app.
@@ -272,7 +273,7 @@ struct SidebarView: View {
 
     private func categoryRow(_ category: CategoryMO) -> some View {
         HStack {
-            Label(category.displayName, systemImage: "tag.fill")
+            Label(category.displayName, systemImage: category.symbol)
             Spacer()
             RememberedCount(category: category, compact: true)
         }
@@ -280,6 +281,7 @@ struct SidebarView: View {
         .contextMenu {
             Button("New folder") { action = .newFolder(category) }
             Button("Rename category") { action = .renameCategory(category) }
+            ReferenceOnlyToggle(category: category)
             Divider()
             Button("Delete category…") { action = .deleteCategory(category) }
         }
@@ -492,7 +494,7 @@ struct PairView: View {
             }
             NavigationLink(destination: WordListScreen(target: .category(category))) {
                 HStack {
-                    Label(category.displayName, systemImage: "tag.fill")
+                    Label(category.displayName, systemImage: category.symbol)
                     Spacer()
                     RememberedCount(category: category)
                 }
@@ -507,6 +509,7 @@ struct PairView: View {
         .contextMenu {
             Button { action = .newFolder(category) } label: { Label("New folder", systemImage: "folder.badge.plus") }
             Button { action = .renameCategory(category) } label: { Label("Rename category", systemImage: "pencil") }
+            ReferenceOnlyToggle(category: category)
             Button(role: .destructive) { action = .deleteCategory(category) } label: { Label("Delete category", systemImage: "trash") }
         }
     }
@@ -544,14 +547,46 @@ struct RememberedCount: View {
     }
 
     var body: some View {
-        let remembered = words.filter(\.isRemembered).count
-        let full = "\(remembered) of \(words.count) remembered"
+        let reviewable = words.filter(\.isReviewable)
+        if reviewable.isEmpty && !words.isEmpty {
+            // A reference-only list: its words are kept, not reviewed.
+            let saved = "\(words.count) saved"
+            Text(compact ? "\(words.count)" : saved)
+                .font(Typeface.body(compact ? 11 : 13))
+                .monospacedDigit()
+                .foregroundColor(Palette.ink.opacity(0.55))
+                .help("\(saved) · reference only")
+                .accessibilityLabel("\(saved), reference only")
+        } else {
+            count(remembered: reviewable.filter(\.isRemembered).count, of: reviewable.count)
+        }
+    }
+
+    private func count(remembered: Int, of total: Int) -> some View {
+        let full = "\(remembered) of \(total) remembered"
         // The Mac sidebar is narrow, so it shows "3/10" with the full wording as a tooltip.
-        Text(compact ? "\(remembered)/\(words.count)" : full)
+        return Text(compact ? "\(remembered)/\(total)" : full)
             .font(Typeface.body(compact ? 11 : 13))
             .monospacedDigit()
             .foregroundColor(Palette.ink.opacity(0.55))
             .help(full)
             .accessibilityLabel(full)
+    }
+}
+
+/// "Reference only" switch for a category's menus: its words are kept but never reviewed.
+struct ReferenceOnlyToggle: View {
+    @ObservedObject var category: CategoryMO
+    @EnvironmentObject private var repository: VocabRepository
+    @EnvironmentObject private var reminders: ReminderService
+
+    var body: some View {
+        Toggle(isOn: Binding(get: { category.referenceOnly },
+                             set: {
+                                 repository.setReferenceOnly(category, $0)
+                                 Task { await reminders.refresh() }   // icon badge and reminder counts
+                             })) {
+            Label("Reference only (no reviews)", systemImage: "book.closed")
+        }
     }
 }

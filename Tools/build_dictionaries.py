@@ -49,6 +49,7 @@ SCHEMA = """
 DROP TABLE IF EXISTS meta;
 DROP TABLE IF EXISTS entries;
 DROP TABLE IF EXISTS forms;
+DROP TABLE IF EXISTS sounds;
 CREATE TABLE meta(key TEXT PRIMARY KEY, value TEXT);
 CREATE TABLE entries(id INTEGER PRIMARY KEY, headword TEXT, reading TEXT, senses TEXT, rank INTEGER);
 CREATE TABLE forms(form TEXT, entry_id INTEGER);
@@ -72,12 +73,131 @@ def open_text(path):
     return open(path, "r", encoding="utf-8")
 
 
+ECDICT_FORMAT = 2  # 2: every single word kept, plus the sounds table (same as the app)
+
+SINGLE_WORD_RE = re.compile(r"^[A-Za-z][A-Za-z'\-]*$")
+
+
+def is_single_word(word):
+    return bool(SINGLE_WORD_RE.match(word))
+
+
+def sound_key(word):
+    """A rough "sounds like" key; mirrors SoundKey.make in DayDayUP/Dictionary/SoundKey.swift."""
+    s = [c for c in word.lower() if "a" <= c <= "z"]
+    if not s:
+        return ""
+    for silent in ("kn", "gn", "pn", "wr", "ps"):
+        if "".join(s[:2]) == silent:
+            s.pop(0)
+            break
+    if s[0] == "x":
+        s[0] = "s"
+    if s[:2] == ["w", "h"]:
+        s.pop(1)
+
+    def at(i):
+        return s[i] if 0 <= i < len(s) else None
+
+    def vowel(c):
+        return c is not None and c in "aeiouy"
+
+    def followed(i, text):
+        return "".join(s[i:i + len(text)]) == text
+
+    out = []
+    i = 0
+    while i < len(s):
+        c, nxt, prev = s[i], at(i + 1), at(i - 1)
+        if c in "aeiouy":
+            if i == 0:
+                out.append("Y" if c == "y" and vowel(nxt) else "A")
+        elif c == "b":
+            if not (prev == "m" and i == len(s) - 1):
+                out.append("B")
+        elif c == "c":
+            if nxt == "h":
+                out.append("X"); i += 1
+            elif nxt is not None and nxt in "eiy":
+                out.append("S")
+            elif nxt == "k":
+                out.append("K"); i += 1
+            else:
+                out.append("K")
+        elif c == "d":
+            if nxt == "g" and at(i + 2) is not None and at(i + 2) in "eiy":
+                out.append("J"); i += 1
+            else:
+                out.append("T")
+        elif c == "g":
+            if nxt == "h":
+                if i == 0:
+                    out.append("K")
+                i += 1
+            elif nxt == "n" and (i + 2 == len(s) or (followed(i + 2, "ed") and i + 4 == len(s))):
+                pass
+            elif nxt is not None and nxt in "eiy":
+                out.append("J")
+            else:
+                out.append("K")
+        elif c == "h":
+            if vowel(nxt) and (i == 0 or vowel(prev)):
+                out.append("H")
+        elif c == "k":
+            out.append("K")
+        elif c == "p":
+            if nxt == "h":
+                out.append("F"); i += 1
+            else:
+                out.append("P")
+        elif c == "q":
+            out.append("K")
+        elif c == "s":
+            if nxt == "h":
+                out.append("X"); i += 1
+            elif followed(i + 1, "ch"):
+                out += ["S", "K"]; i += 2
+            elif followed(i + 1, "io") or followed(i + 1, "ia"):
+                out.append("X")
+            else:
+                out.append("S")
+        elif c == "t":
+            if nxt == "h":
+                out.append("0"); i += 1
+            elif followed(i + 1, "io") or followed(i + 1, "ia"):
+                out.append("X")
+            elif followed(i + 1, "ch"):
+                pass
+            else:
+                out.append("T")
+        elif c == "v":
+            out.append("F")
+        elif c == "w":
+            if vowel(nxt):
+                out.append("W")
+        elif c == "x":
+            out += ["K", "S"]
+        elif c == "z":
+            out.append("S")
+        else:
+            out.append(c.upper())
+        i += 1
+    collapsed = []
+    for code in out:
+        if not collapsed or collapsed[-1] != code:
+            collapsed.append(code)
+    return "".join(collapsed)
+
+
 class Writer:
-    def __init__(self, out_path, meta):
+    def __init__(self, out_path, meta, sound_keys=False):
         if os.path.exists(out_path):
             os.remove(out_path)
+        self.sound_keys = sound_keys
         self.db = sqlite3.connect(out_path)
         self.db.executescript(SCHEMA)
+        if sound_keys:
+            self.db.execute("CREATE TABLE sounds(key TEXT, form TEXT, rank INTEGER)")
         self.db.executemany("INSERT INTO meta VALUES (?, ?)", list(meta.items()))
         self.next_id = 1
         self.count = 0
@@ -94,11 +214,17 @@ class Writer:
         )
         for form in sorted(set(f for f in forms if f)):
             self.db.execute("INSERT INTO forms VALUES (?, ?)", (form, eid))
+            if self.sound_keys and is_single_word(form):
+                key = sound_key(form)
+                if key:
+                    self.db.execute("INSERT INTO sounds VALUES (?, ?, ?)", (key, form, rank))
         self.count += 1
 
     def close(self):
         self.db.execute("INSERT OR REPLACE INTO meta VALUES ('entries', ?)", (str(self.count),))
         self.db.executescript(INDEXES)
+        if self.sound_keys:
+            self.db.execute("CREATE INDEX idx_sounds_key ON sounds(key, rank)")
         self.db.commit()
         self.db.execute("VACUUM")
         self.db.close()
@@ -143,11 +269,14 @@ def keep_ecdict_row(row, max_rank):
         return True
     if (row.get("collins") or "0") not in ("", "0"):
         return True
+    if is_single_word(word.strip()):
+        return True  # every single word is kept; the rank limit only trims phrases
     return ecdict_rank(row) <= max_rank
 
 
 def build_ecdict(path, out_path, max_rank):
-    w = Writer(out_path, {"id": "ecdict", "source": "en", "title": "ECDICT", "license": "MIT"})
+    w = Writer(out_path, {"id": "ecdict", "source": "en", "title": "ECDICT", "license": "MIT",
+                          "format": str(ECDICT_FORMAT)}, sound_keys=True)
     with open_text(path) as f:
         for row in csv.DictReader(f):
             if not keep_ecdict_row(row, max_rank):
@@ -310,7 +439,7 @@ def main():
     ap.add_argument("--input-dir", help="folder holding ecdict.csv, cedict_1_0_ts_utf-8_mdbg.txt.gz, JMdict_e.gz")
     ap.add_argument("--out-dir", default="build")
     ap.add_argument("--ecdict-max-rank", type=int, default=60000,
-                    help="keep untagged ECDICT words only if their frequency rank is at most this (trims size)")
+                    help="keep untagged ECDICT phrases only if their frequency rank is at most this; single words are always kept")
     args = ap.parse_args()
     os.makedirs(args.out_dir, exist_ok=True)
 

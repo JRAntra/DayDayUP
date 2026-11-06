@@ -199,3 +199,78 @@ extension View {
         }
     }
 }
+
+// MARK: - Wikipedia (technical terms, tool names)
+
+/// The Wikipedia of the word's language: a one-line explanation, and the title of the linked article
+/// in the other language (Idempotence → 幂等). Free and keyless. Disambiguation pages are skipped.
+struct WikipediaClient {
+    struct Summary {
+        var title: String
+        /// The article's first sentence (or its short description).
+        var explanation: String
+        /// The short description, e.g. "Open-source container software".
+        var shortDescription: String
+        /// The linked article's title in the target language, if there is one.
+        var linkedTitle: String?
+    }
+
+    private struct Response: Decodable {
+        struct Query: Decodable { var pages: [Page]? }
+        struct Page: Decodable {
+            struct Link: Decodable { var lang: String?; var title: String? }
+            var title: String?
+            var missing: Bool?
+            var description: String?
+            var extract: String?
+            var langlinks: [Link]?
+            var pageprops: [String: String]?
+        }
+        var query: Query?
+    }
+
+    func summary(for term: String, from: AppLanguage, to: AppLanguage) async throws -> Summary? {
+        var components = URLComponents(string: "https://\(from.rawValue).wikipedia.org/w/api.php")!
+        var items = [
+            URLQueryItem(name: "action", value: "query"), URLQueryItem(name: "format", value: "json"),
+            URLQueryItem(name: "formatversion", value: "2"), URLQueryItem(name: "redirects", value: "1"),
+            URLQueryItem(name: "prop", value: "description|extracts|langlinks|pageprops"),
+            URLQueryItem(name: "exintro", value: "1"), URLQueryItem(name: "explaintext", value: "1"),
+            URLQueryItem(name: "exsentences", value: "1"), URLQueryItem(name: "lllang", value: to.rawValue),
+            URLQueryItem(name: "ppprop", value: "disambiguation"), URLQueryItem(name: "titles", value: term),
+        ]
+        if from == .chinese { items.append(URLQueryItem(name: "variant", value: "zh-cn")) }
+        components.queryItems = items
+        var request = URLRequest(url: components.url!)
+        request.setValue("DayDayUP/1.0 (personal vocabulary app)", forHTTPHeaderField: "User-Agent")
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard (response as? HTTPURLResponse)?.statusCode == 200,
+              let page = try JSONDecoder().decode(Response.self, from: data).query?.pages?.first,
+              page.missing != true, page.pageprops?["disambiguation"] == nil,
+              let title = page.title else { return nil }
+
+        let description = (page.description ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let sentence = Self.cleanSentence(page.extract ?? "")
+        let explanation = !sentence.isEmpty && sentence.count <= 240 ? sentence : description
+        guard !explanation.isEmpty else { return nil }
+        var linked = page.langlinks?.first { $0.lang == to.rawValue }?.title
+        if to == .chinese { linked = linked.map(Self.simplified) }
+        return Summary(title: title, explanation: explanation, shortDescription: description, linkedTitle: linked)
+    }
+
+    /// Drops the bracketed bits plain-text extracts leave behind ("(UK: , US: )", "()") and tidies spaces.
+    static func cleanSentence(_ text: String) -> String {
+        var out = text
+        while let range = out.range(of: #"\s*[(（][^()（）]*[)）]"#, options: .regularExpression) {
+            out.removeSubrange(range)
+        }
+        return out.replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
+            .replacingOccurrences(of: " ,", with: ",")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    /// Chinese Wikipedia titles can be in traditional characters (冪等); the app uses simplified.
+    static func simplified(_ text: String) -> String {
+        text.applyingTransform(StringTransform(rawValue: "Hant-Hans"), reverse: false) ?? text
+    }
+}

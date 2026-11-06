@@ -61,6 +61,8 @@ final class LanguagePairMO: NSManagedObject, SyncRecord {
 
     /// Pairs without any words are hidden on Today and in the Library (see LibraryState).
     var hasWords: Bool { liveCategories.contains { !$0.liveWords.isEmpty } }
+    /// Has words outside reference-only categories, so it has something to review in Today.
+    var hasReviewableWords: Bool { liveCategories.contains { !$0.referenceOnly && !$0.liveWords.isEmpty } }
 }
 
 // MARK: - Category
@@ -74,6 +76,8 @@ final class CategoryMO: NSManagedObject, SyncRecord {
     @NSManaged var deletionBatch: UUID?
     @NSManaged var name: String?
     @NSManaged var sortIndex: Int64
+    /// Words here are kept and can be looked up, but never reviewed (see LOOKUP_AND_REFERENCE.md).
+    @NSManaged var referenceOnly: Bool
     @NSManaged var pair: LanguagePairMO?
     @NSManaged var folders: Set<FolderMO>?
     @NSManaged var words: Set<WordMO>?
@@ -151,6 +155,8 @@ final class WordMO: NSManagedObject, SyncRecord {
         }
     }
     var isRemembered: Bool { schedule.isRemembered }
+    /// False in a reference-only category: kept, but never reviewed and not counted.
+    var isReviewable: Bool { category?.referenceOnly != true }
     var isNew: Bool { step == 0 }
     var isDue: Bool { ReviewSchedule.isDue(schedule) }
     var dueText: String { ReviewSchedule.dueText(schedule) }
@@ -222,4 +228,9 @@ final class AchievementMO: NSManagedObject, SyncRecord {
     @NSManaged var deletionBatch: UUID?
     @NSManaged var key: String?
     @NSManaged var unlockedAt: Date?
+}
+
+extension CategoryMO {
+    /// Reference-only categories show a book instead of a tag.
+    var symbol: String { referenceOnly ? "book.closed.fill" : "tag.fill" }
 }

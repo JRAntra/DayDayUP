@@ -27,16 +27,21 @@ struct TodayView: View {
     @State private var launch: TodayLaunch?
 
     var body: some View {
-        let visiblePairs = pairs.filter(\.hasWords)
-        let struggling = words.filter(\.inReview).count
+        // Pairs whose words are all reference-only have nothing to review, so they're left out.
+        let visiblePairs = pairs.filter(\.hasReviewableWords)
+        let struggling = words.filter { $0.inReview && $0.isReviewable }.count
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
                 link(open: openProgress, destination: ProgressPage()) { streakCard }
 
                 if visiblePairs.isEmpty {
+                    let onlyReference = pairs.contains(where: \.hasWords)
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("Add your first word").font(Typeface.title(19)).foregroundColor(Palette.ink)
-                        Text("Open Library, pick a language pair and type a word. Its reviews show up here.")
+                        Text(onlyReference ? "Nothing to review" : "Add your first word")
+                            .font(Typeface.title(19)).foregroundColor(Palette.ink)
+                        Text(onlyReference
+                             ? "Your words are all in reference-only categories. Add words to another category to review them here."
+                             : "Open Library, pick a language pair and type a word. Its reviews show up here.")
                             .font(Typeface.body(14)).foregroundColor(Palette.ink.opacity(0.65))
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -185,7 +190,7 @@ private struct TodaySessionSheet: View {
                 let summary = planner.summary(for: pair)
                 return summary.due + summary.newToday
             })
-        let pool = repository.liveWords(in: pair)
+        let pool = repository.reviewableWords(in: pair)
         Group {
             switch launch.mode {
             case .quiz: QuizFlow(pool: pool, accent: pair.accent, today: source)

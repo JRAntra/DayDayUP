@@ -82,6 +82,13 @@ final class DictionaryManager: ObservableObject {
 
     func dictionary(for language: AppLanguage) -> LocalDictionary? { dictionary(language.dictionary) }
 
+    /// An installed ECDICT built by an older version (59k words, no sound keys) can be rebuilt from
+    /// the same download to get every single word and "sounds like" suggestions.
+    func updateAvailable(_ id: DictionaryID) -> Bool {
+        guard id == .ecdict, isInstalled(id), let dictionary = dictionary(id) else { return false }
+        return dictionary.format < DictionaryBuilder.ecdictFormat
+    }
+
     private static var workDir: URL {
         FileManager.default.temporaryDirectory.appendingPathComponent("DictionaryImport", isDirectory: true)
     }

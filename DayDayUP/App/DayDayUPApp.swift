@@ -131,6 +131,6 @@ enum Fetch {
     }
 
     static func reviewWords() -> NSFetchRequest<WordMO> {
-        words(NSPredicate(format: "deletedAt == nil AND inReview == YES"))
+        words(VocabRepository.reviewableOnly(NSPredicate(format: "deletedAt == nil AND inReview == YES")))
     }
 }
