@@ -53,8 +53,10 @@ Licences: ECDICT (MIT), CC-CEDICT (CC BY-SA 3.0), JMdict (CC BY-SA 4.0, EDRDG). 
 | Progress page: 30-day activity chart, words per ladder step, streak, achievements | `Features/Progress/ProgressPage.swift` |
 | Recently opened lists, hidden empty language pairs, dismissed dictionary banners (per device) | `Domain/LibraryState.swift` |
 | One-time move of old 3-ring progress onto the ladder (store upgrade + mapping) | `Persistence/VocabRepository.swift` (`migrateIfNeeded`, `mapLegacyProgressIfNeeded`) |
-| Lookup order, pivoting through English for Japanese → Chinese, suggestions on no match | `Dictionary/LookupService.swift`, `Dictionary/LocalDictionary.swift` |
-| Apple Translate (iOS 18 / macOS 15) with MyMemory fallback on macOS 12–14 | `Dictionary/OnlineSources.swift` |
+| Lookup: offline dictionary first, then every web source at once in the Add sheet; pivoting through English for Japanese → Chinese; see `LOOKUP_AND_REFERENCE.md` | `Dictionary/LookupService.swift`, `Features/Library/AddWord.swift` |
+| Similar words: spelling neighbours (swapped letters count once), sounds-like keys, common words first | `Dictionary/LocalDictionary.swift`, `Dictionary/SoundKey.swift` |
+| Reference-only categories (kept, never reviewed) | `Persistence/VocabRepository.swift` (`reviewable`), `Features/Root/RootView.swift` |
+| Web sources: Wiktionary, Wikipedia (terms and names), Apple Translate (iOS 18 / macOS 15), MyMemory | `Dictionary/OnlineSources.swift` |
 | Quiz priority, primary-sense answers, same-scope/same-POS distractors with widening fallback | `Domain/QuizEngine.swift` |
 | Streak day = a round of 20 finished, or today's reviews cleared; achievements | `Domain/Gamification.swift` |
 | Full backup and per-table CSV with merge/skip/replace | `ImportExport/ImportExport.swift` |

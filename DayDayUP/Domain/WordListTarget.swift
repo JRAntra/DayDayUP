@@ -57,7 +57,7 @@ enum WordListTarget: Hashable {
         switch self {
         case .review: return "arrow.uturn.backward.circle.fill"
         case .pair: return "square.stack.3d.up.fill"
-        case .category: return "tag.fill"
+        case .category(let c): return c.symbol
         case .unfiled: return "tray"
         case .folder: return "folder.fill"
         }

@@ -198,6 +198,15 @@ struct DictionariesSettingsView: View {
         case .installed(let entries):
             Label("Installed · \(entries.formatted()) entries", systemImage: "checkmark.circle.fill")
                 .font(Typeface.label(12)).foregroundColor(Palette.mint)
+            if dictionaries.updateAvailable(id) {
+                Text("Update adds about 340,000 more words, including technical terms, and \u{201C}sounds like\u{201D} suggestions. \(id.downloadSize) download; your saved words aren't touched.")
+                    .font(Typeface.label(12)).foregroundColor(Palette.ink.opacity(0.6))
+                    .fixedSize(horizontal: false, vertical: true)
+                Button("Update") { Task { await dictionaries.download(id) } }
+                    .buttonStyle(ChunkyButtonStyle(height: 34, fullWidth: false))
+                    .lineLimit(1).fixedSize()
+                    .padding(.top, 4)
+            }
         case .downloading(let progress):
             Text(progress.map { "Downloading… \(Int($0 * 100))%" } ?? "Downloading…")
                 .font(Typeface.label(12)).foregroundColor(Palette.ink.opacity(0.6))

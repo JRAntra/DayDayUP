@@ -11,8 +11,12 @@ import SQLite3
 ///
 /// The rules mirror Tools/build_dictionaries.py exactly, so a file built here matches one built there.
 enum DictionaryBuilder {
-    /// Untagged ECDICT words are kept only up to this frequency rank (same default as the script).
+    /// Untagged ECDICT phrases are kept only up to this frequency rank (same default as the script).
+    /// Single words are always kept. Words above this rank also count as rare in similar-word suggestions.
     static let ecdictMaxRank = 60000
+    /// Version of the ECDICT file layout. 2 keeps every single word and adds the `sounds` table;
+    /// an installed file with a lower number shows "Update" in Settings.
+    static let ecdictFormat = 2
 
     enum SourceKind { case sqlite, ecdict, cedict, jmdict }
 
@@ -173,7 +177,9 @@ enum DictionaryBuilder {
 
     static func buildECDICT(_ data: Data, to out: URL, progress: (Double) -> Void) throws -> Int {
         let writer = try DictionaryWriter(path: out.path,
-                                          meta: ["id": "ecdict", "source": "en", "title": "ECDICT", "license": "MIT"])
+                                          meta: ["id": "ecdict", "source": "en", "title": "ECDICT", "license": "MIT",
+                                                 "format": String(ecdictFormat)],
+                                          soundKeys: true)
         var columns: [String: Int] = [:]
         var isHeader = true
 
@@ -290,7 +296,8 @@ enum DictionaryBuilder {
         let collinsRange = range("collins")
         let tagged = !isBlank(range("tag")) || equals(range("oxford"), "1")
             || !(equals(collinsRange, "") || equals(collinsRange, "0"))
-        guard tagged || rank <= ecdictMaxRank else { return }
+        let word = text(wordRange).trimmingCharacters(in: .whitespacesAndNewlines)
+        guard tagged || rank <= ecdictMaxRank || SoundKey.isSingleWord(word) else { return }
 
         var definitions = splitPOSLines(text(range("definition")))
         var senses: [OutSense] = []
@@ -308,7 +315,6 @@ enum DictionaryBuilder {
             }
         }
         guard !senses.isEmpty else { return }
-        let word = text(wordRange).trimmingCharacters(in: .whitespacesAndNewlines)
         let phonetic = text(range("phonetic")).trimmingCharacters(in: .whitespacesAndNewlines)
         try writer.add(headword: word, reading: phonetic.isEmpty ? "" : "/\(phonetic)/",
                        senses: senses, rank: rank, forms: [word.lowercased()])
@@ -589,11 +595,15 @@ final class DictionaryWriter {
     private var db: OpaquePointer?
     private var insertEntry: OpaquePointer?
     private var insertForm: OpaquePointer?
+    private var insertSound: OpaquePointer?
+    private let soundKeys: Bool
     private var nextID: Int64 = 1
     private(set) var count = 0
     private static let transient = unsafeBitCast(-1, to: sqlite3_destructor_type.self)
 
-    init(path: String, meta: [String: String]) throws {
+    /// `soundKeys` adds the `sounds` table (English): one row per single-word form with its `SoundKey`.
+    init(path: String, meta: [String: String], soundKeys: Bool = false) throws {
+        self.soundKeys = soundKeys
         try? FileManager.default.removeItem(atPath: path)
         guard sqlite3_open(path, &db) == SQLITE_OK else { throw error("open") }
         try exec("PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF;")
@@ -602,6 +612,7 @@ final class DictionaryWriter {
             CREATE TABLE entries(id INTEGER PRIMARY KEY, headword TEXT, reading TEXT, senses TEXT, rank INTEGER);
             CREATE TABLE forms(form TEXT, entry_id INTEGER);
             """)
+        if soundKeys { try exec("CREATE TABLE sounds(key TEXT, form TEXT, rank INTEGER);") }
         for (key, value) in meta.sorted(by: { $0.key < $1.key }) {
             try exec("INSERT INTO meta VALUES ('\(key)', '\(value.replacingOccurrences(of: "'", with: "''"))')")
         }
@@ -609,6 +620,9 @@ final class DictionaryWriter {
         guard sqlite3_prepare_v2(db, "INSERT INTO entries VALUES (?, ?, ?, ?, ?)", -1, &insertEntry, nil) == SQLITE_OK,
               sqlite3_prepare_v2(db, "INSERT INTO forms VALUES (?, ?)", -1, &insertForm, nil) == SQLITE_OK
         else { throw error("prepare") }
+        if soundKeys, sqlite3_prepare_v2(db, "INSERT INTO sounds VALUES (?, ?, ?)", -1, &insertSound, nil) != SQLITE_OK {
+            throw error("prepare")
+        }
     }
 
     deinit { close() }
@@ -635,6 +649,15 @@ final class DictionaryWriter {
             sqlite3_bind_text(insertForm, 1, form, -1, Self.transient)
             sqlite3_bind_int64(insertForm, 2, id)
             guard sqlite3_step(insertForm) == SQLITE_DONE else { throw error("insert form") }
+            if soundKeys, SoundKey.isSingleWord(form) {
+                let key = SoundKey.make(form)
+                guard !key.isEmpty else { continue }
+                sqlite3_reset(insertSound)
+                sqlite3_bind_text(insertSound, 1, key, -1, Self.transient)
+                sqlite3_bind_text(insertSound, 2, form, -1, Self.transient)
+                sqlite3_bind_int64(insertSound, 3, Int64(rank))
+                guard sqlite3_step(insertSound) == SQLITE_DONE else { throw error("insert sound") }
+            }
         }
         count += 1
     }
@@ -643,9 +666,11 @@ final class DictionaryWriter {
     func finish() throws -> Int {
         sqlite3_finalize(insertEntry); insertEntry = nil
         sqlite3_finalize(insertForm); insertForm = nil
+        sqlite3_finalize(insertSound); insertSound = nil
         try exec("COMMIT")
         try exec("INSERT OR REPLACE INTO meta VALUES ('entries', '\(count)')")
         try exec("CREATE INDEX idx_forms_form ON forms(form); CREATE INDEX idx_entries_rank ON entries(rank);")
+        if soundKeys { try exec("CREATE INDEX idx_sounds_key ON sounds(key, rank);") }
         try exec("VACUUM")
         close()
         return count
@@ -654,8 +679,10 @@ final class DictionaryWriter {
     private func close() {
         if let insertEntry { sqlite3_finalize(insertEntry) }
         if let insertForm { sqlite3_finalize(insertForm) }
+        if let insertSound { sqlite3_finalize(insertSound) }
         insertEntry = nil
         insertForm = nil
+        insertSound = nil
         if let db { sqlite3_close(db) }
         db = nil
     }

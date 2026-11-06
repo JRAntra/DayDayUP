@@ -55,6 +55,8 @@ struct LookupCandidate: Identifiable, Hashable {
     var reading: String
     /// Which source produced it, e.g. "ECDICT" or "MyMemory".
     var source: String
+    /// From a machine translator (Apple Translate, MyMemory): shown with a "machine translation" tag.
+    var machine = false
 }
 
 // MARK: - Day keys

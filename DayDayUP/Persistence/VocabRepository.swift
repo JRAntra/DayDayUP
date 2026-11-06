@@ -156,6 +156,12 @@ final class VocabRepository: ObservableObject {
     }
 
     private static let live = NSPredicate(format: "deletedAt == nil")
+    /// Words outside reference-only categories: the ones that are reviewed and counted.
+    nonisolated static var reviewable: NSPredicate { NSPredicate(format: "category.referenceOnly != YES") }
+    /// `predicate` limited to reviewable words.
+    nonisolated static func reviewableOnly(_ predicate: NSPredicate) -> NSPredicate {
+        NSCompoundPredicate(andPredicateWithSubpredicates: [predicate, reviewable])
+    }
 
     func pairs() -> [LanguagePairMO] {
         fetch(LanguagePairMO.self, Self.live, sort: [NSSortDescriptor(key: "sortIndex", ascending: true),
@@ -196,6 +202,8 @@ final class VocabRepository: ObservableObject {
         }
         // Words inside a deleted folder/category/pair are soft-deleted with it, so `deletedAt` is enough.
         if scope.reviewOnly { parts.append(NSPredicate(format: "inReview == YES")) }
+        // The Review Book and every status filter are about reviews, so reference-only words stay out.
+        if scope.reviewOnly || filter.remembered != .all { parts.append(reviewable) }
 
         switch filter.remembered {
         case .all: break
@@ -257,7 +265,7 @@ final class VocabRepository: ObservableObject {
     }
 
     @discardableResult
-    func createCategory(named name: String, in pair: LanguagePairMO) throws -> CategoryMO {
+    func createCategory(named name: String, in pair: LanguagePairMO, referenceOnly: Bool = false) throws -> CategoryMO {
         let clean = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !clean.isEmpty else { throw RepositoryError.emptyName }
         if let match = pair.liveCategories.first(where: { $0.displayName.caseInsensitiveCompare(clean) == .orderedSame }) {
@@ -267,6 +275,7 @@ final class VocabRepository: ObservableObject {
         category.stampNew()
         category.name = clean
         category.sortIndex = Int64(pair.liveCategories.count)
+        category.referenceOnly = referenceOnly
         category.pair = pair
         save()
         return category
@@ -286,6 +295,18 @@ final class VocabRepository: ObservableObject {
         folder.category = category
         save()
         return folder
+    }
+
+    /// Switches a category to reference-only or back. Review progress is kept untouched, so it pauses
+    /// while the category is reference-only and resumes (overdue words included) when switched back.
+    func setReferenceOnly(_ category: CategoryMO, _ on: Bool) {
+        guard category.referenceOnly != on else { return }
+        category.referenceOnly = on
+        category.touch()
+        // Word fetches (due badges, Today, the Review Book) only refresh when a word changes.
+        category.liveWords.forEach { $0.touch() }
+        save()
+        objectWillChange.send()
     }
 
     func rename(_ category: CategoryMO, to name: String) {
@@ -395,14 +416,15 @@ final class VocabRepository: ObservableObject {
 
     // MARK: Review schedule
 
-    /// Live words in a pair, for Today and the reminder.
-    func liveWords(in pair: LanguagePairMO) -> [WordMO] {
-        fetch(WordMO.self, NSPredicate(format: "deletedAt == nil AND category.pair == %@ AND category.deletedAt == nil", pair))
+    /// Live words in a pair outside reference-only categories, for Today.
+    func reviewableWords(in pair: LanguagePairMO) -> [WordMO] {
+        fetch(WordMO.self, Self.reviewableOnly(
+            NSPredicate(format: "deletedAt == nil AND category.pair == %@ AND category.deletedAt == nil", pair)))
     }
 
     /// Words due on `day` or earlier, across every pair.
     func dueCount(on day: String = DayKey.today) -> Int {
-        countWords(NSPredicate(format: "deletedAt == nil AND step > 0 AND (dueDay == nil OR dueDay <= %@)", day))
+        countWords(Self.reviewableOnly(NSPredicate(format: "deletedAt == nil AND step > 0 AND (dueDay == nil OR dueDay <= %@)", day)))
     }
 
     /// Maps progress kept under the old 3-ring rule onto the review ladder. Runs once, after the store

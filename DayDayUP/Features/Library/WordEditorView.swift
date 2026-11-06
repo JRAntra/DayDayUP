@@ -194,9 +194,9 @@ struct WordEditorView: View {
     private func lookUpMore() async {
         guard let pair else { return }
         lookingUp = true
-        let outcome = await lookup.lookup(word.termValue, from: pair.from, to: pair.to)
+        let session = await lookup.start(word.termValue, from: pair.from, to: pair.to, existing: word)
         lookingUp = false
-        picker = LookupSession(outcome: outcome, existing: word)
+        picker = session
     }
 
     private func openAppleDictionary() {
@@ -244,12 +244,14 @@ struct WordEditorView: View {
             }
 
             HStack(spacing: 10) {
-                Button {
-                    repository.setInReview([word], !word.inReview)
-                } label: {
-                    Label(word.inReview ? "Remove from Review Book" : "Add to Review Book", systemImage: "arrow.uturn.backward.circle")
+                if word.isReviewable {
+                    Button {
+                        repository.setInReview([word], !word.inReview)
+                    } label: {
+                        Label(word.inReview ? "Remove from Review Book" : "Add to Review Book", systemImage: "arrow.uturn.backward.circle")
+                    }
+                    .buttonStyle(OutlineChunkyButtonStyle(color: Palette.cherry))
                 }
-                .buttonStyle(OutlineChunkyButtonStyle(color: Palette.cherry))
                 Button { showMove = true } label: { Label("Move", systemImage: "folder") }
                     .buttonStyle(OutlineChunkyButtonStyle(color: accent))
                 Button { confirmDelete = true } label: { Label("Delete", systemImage: "trash") }
@@ -260,6 +262,9 @@ struct WordEditorView: View {
     }
 
     private var statusText: String {
+        if !word.isReviewable {
+            return word.isNew ? "Reference only · not reviewed" : "Reference only · review progress paused"
+        }
         let total = ReviewSchedule.reviewsToRemember
         let passed = max(0, min(Int(word.step), ReviewSchedule.rememberedStep) - 1)
         let next = word.isDue ? "due today" : "next review \(word.dueText.lowercased())"

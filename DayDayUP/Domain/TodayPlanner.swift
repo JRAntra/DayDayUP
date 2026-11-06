@@ -34,7 +34,7 @@ final class TodayPlanner: ObservableObject {
 
     /// Words a Today round can use: live and with a meaning to test.
     private func usableWords(in pair: LanguagePairMO) -> [WordMO] {
-        repository.liveWords(in: pair).filter(QuizEngine.hasQuizzableMeaning)
+        repository.reviewableWords(in: pair).filter(QuizEngine.hasQuizzableMeaning)
     }
 
     /// New words already started today in this pair, wherever they were answered.

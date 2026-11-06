@@ -11,8 +11,9 @@ import CoreData
 enum ManagedModel {
     /// Version 2 added the review schedule (word step, due day, started day, and the streak flag per day).
     /// Version 3 added the per-day answer counts per language pair, for the Progress charts.
+    /// Version 4 added reference-only categories (words that are kept but never reviewed).
     /// Older versions are kept so a store created by an older build can be migrated (see PersistenceController).
-    static let currentVersion = 3
+    static let currentVersion = 4
     static let shared: NSManagedObjectModel = build(version: currentVersion)
 
     private static func attribute(_ name: String, _ type: NSAttributeType, default value: Any? = nil) -> NSAttributeDescription {
@@ -108,6 +109,9 @@ enum ManagedModel {
             attribute("sortIndex", .integer64AttributeType, default: 0),
             categoryPair, categoryFolders, categoryWords,
         ]
+        if version >= 4 {
+            category.properties += [attribute("referenceOnly", .booleanAttributeType, default: false)]
+        }
 
         folder.properties = syncFields() + [
             attribute("name", .stringAttributeType, default: ""),

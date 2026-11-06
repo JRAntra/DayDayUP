@@ -25,7 +25,7 @@ struct ProgressPage: View {
                     .fixedSize()
                 }
                 ActivityChart(days: activityDays(scoped))
-                LadderChart(counts: ladderCounts(scoped))
+                LadderChart(counts: ladderCounts(scoped.filter(\.isReviewable)))
                 streakHeader
                 section("Remembered words", kind: .remembered)
                 section("Daily streak", kind: .streak)
