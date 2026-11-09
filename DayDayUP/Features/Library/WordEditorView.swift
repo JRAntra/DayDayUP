@@ -20,6 +20,9 @@ struct WordEditorView: View {
     @State private var showMove = false
     @State private var alsoIn: CategoryMO?
     @State private var confirmDelete = false
+    /// True when the editor is narrower than 450 points (the Mac inspector can be 300, an iPhone is
+    /// about 400): the header and the meaning fields then stack instead of sharing a line.
+    @State private var compact = true
     #if os(iOS)
     @State private var showAppleDictionary = false
     #endif
@@ -28,14 +31,18 @@ struct WordEditorView: View {
     private var pair: LanguagePairMO? { word.pair }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                header
-                sensesCard
-                notesCard
-                statusCard
+        GeometryReader { geo in
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    header
+                    sensesCard
+                    notesCard
+                    statusCard
+                }
+                .padding(16)
             }
-            .padding(16)
+            .onAppear { compact = geo.size.width < 450 }
+            .onChange(of: geo.size.width) { compact = $0 < 450 }
         }
         .background(Palette.background)
         .navigationTitle(word.termValue)
@@ -77,49 +84,74 @@ struct WordEditorView: View {
 
     // MARK: Header
 
+    /// Narrow: the ring and the speaker share the top line and the word gets the full width below.
+    /// Wide: ring · word · speaker on one line.
     private var header: some View {
-        HStack(alignment: .top, spacing: 14) {
-            ProgressRing(step: Int(word.step), inReview: word.inReview, accent: accent, size: 54)
-            VStack(alignment: .leading, spacing: 6) {
-                TextField("Word", text: Binding(get: { word.termValue }, set: { newValue in
-                    word.term = newValue
-                    if let category = word.category { word.termKey = repository.termKey(newValue, in: category) }
-                    word.touch()
-                }))
-                .textFieldStyle(.plain)
-                .font(Typeface.display(30))
-                TextField("Reading (pinyin, kana or phonetic)", text: Binding(get: { word.readingValue }, set: {
-                    word.reading = $0
-                    word.touch()
-                }))
-                .textFieldStyle(.plain)
-                .font(Typeface.body(16))
-                .foregroundColor(Palette.ink.opacity(0.7))
+        Group {
+            if compact {
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack {
+                        ProgressRing(step: Int(word.step), inReview: word.inReview, accent: accent, size: 44)
+                        Spacer()
+                        speakButton
+                    }
+                    termFields
+                }
+            } else {
+                HStack(alignment: .top, spacing: 14) {
+                    ProgressRing(step: Int(word.step), inReview: word.inReview, accent: accent, size: 54)
+                    termFields
+                    speakButton
+                }
             }
-            Spacer()
-            Button { speech.speak(word) } label: {
-                Image(systemName: "speaker.wave.2.fill").font(.system(size: 18, weight: .bold))
-            }
-            .buttonStyle(ChunkyButtonStyle(color: accent, height: 44, fullWidth: false))
-            .accessibilityLabel("Play pronunciation")
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .card()
+    }
+
+    private var termFields: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            GrowingTextField(title: "Word", text: Binding(get: { word.termValue }, set: { newValue in
+                word.term = newValue
+                if let category = word.category { word.termKey = repository.termKey(newValue, in: category) }
+                word.touch()
+            }), maxLines: 3)
+            .textFieldStyle(.plain)
+            .font(Typeface.display(compact ? 26 : 30))
+            GrowingTextField(title: "Reading (pinyin, kana or phonetic)", text: Binding(get: { word.readingValue }, set: {
+                word.reading = $0
+                word.touch()
+            }), maxLines: 2)
+            .textFieldStyle(.plain)
+            .font(Typeface.body(16))
+            .foregroundColor(Palette.ink.opacity(0.7))
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var speakButton: some View {
+        Button { speech.speak(word) } label: {
+            Image(systemName: "speaker.wave.2.fill").font(.system(size: 18, weight: .bold))
+        }
+        .buttonStyle(ChunkyButtonStyle(color: accent, height: 44, fullWidth: false))
+        .accessibilityLabel("Play pronunciation")
     }
 
     // MARK: Senses
 
     private var sensesCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack {
+            AdaptiveRow(spacing: 4) {
                 Text("Meanings").font(Typeface.title(18))
-                Spacer()
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 Text("The first meaning is the one quizzes test.")
                     .font(Typeface.body(12)).foregroundColor(Palette.ink.opacity(0.55))
+                    .layoutPriority(1)   // otherwise the stretching title takes half the row and cuts this off
             }
             ForEach(Array(senses.enumerated()), id: \.element.id) { index, sense in
                 senseEditor(index, id: sense.id)
             }
-            HStack(spacing: 10) {
+            AdaptiveRow {
                 Button { senses.append(Sense(translation: "")) } label: { Label("Add meaning", systemImage: "plus") }
                     .buttonStyle(OutlineChunkyButtonStyle(color: accent))
                 Button { Task { await lookUpMore() } } label: {
@@ -146,12 +178,13 @@ struct WordEditorView: View {
     private func senseEditor(_ index: Int, id: UUID) -> some View {
         let field = binding(for: id)
         return VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 8) {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
                 Text("\(index + 1)")
                     .font(Typeface.label(13)).foregroundColor(.white)
                     .frame(width: 24, height: 24)
                     .background(Circle().fill(index == 0 ? accent : Palette.ink.opacity(0.35)))
-                TextField(pair.map { "Translation in \($0.to.displayName)" } ?? "Translation", text: field.translation)
+                GrowingTextField(title: pair.map { "Translation in \($0.to.displayName)" } ?? "Translation",
+                                 text: field.translation)
                     .textFieldStyle(.plain)
                     .font(Typeface.title(17))
                 if field.wrappedValue.approximate {
@@ -173,13 +206,16 @@ struct WordEditorView: View {
                 .menuStyle(.borderlessButton)
                 .fixedSize()
             }
-            HStack(spacing: 8) {
-                TextField("Part of speech", text: field.partOfSpeech)
-                    .textFieldStyle(.roundedBorder)
-                    .frame(maxWidth: 120)
-                TextField("English explanation", text: field.english)
-                    .textFieldStyle(.roundedBorder)
+            Group {
+                let partOfSpeech = TextField("Part of speech", text: field.partOfSpeech).frame(maxWidth: 120)
+                let english = GrowingTextField(title: "English explanation", text: field.english)
+                if compact {
+                    VStack(alignment: .leading, spacing: 8) { partOfSpeech; english }
+                } else {
+                    HStack(alignment: .top, spacing: 8) { partOfSpeech; english }
+                }
             }
+            .textFieldStyle(.roundedBorder)
             .font(Typeface.body(14))
         }
         .padding(12)
@@ -213,10 +249,11 @@ struct WordEditorView: View {
     private var notesCard: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Example sentence").font(Typeface.label(13)).foregroundColor(Palette.ink.opacity(0.6))
-            TextField("Optional", text: Binding(get: { word.example ?? "" }, set: { word.example = $0; word.touch() }))
+            GrowingTextField(title: "Optional", text: Binding(get: { word.example ?? "" }, set: { word.example = $0; word.touch() }))
                 .textFieldStyle(.roundedBorder)
             Text("Notes").font(Typeface.label(13)).foregroundColor(Palette.ink.opacity(0.6))
-            TextField("Anything that helps you remember", text: Binding(get: { word.notes ?? "" }, set: { word.notes = $0; word.touch() }))
+            GrowingTextField(title: "Anything that helps you remember",
+                             text: Binding(get: { word.notes ?? "" }, set: { word.notes = $0; word.touch() }), maxLines: 8)
                 .textFieldStyle(.roundedBorder)
         }
         .font(Typeface.body(15))
@@ -233,7 +270,7 @@ struct WordEditorView: View {
 
             let others = repository.otherCategories(for: word)
             if !others.isEmpty {
-                HStack(spacing: 6) {
+                AdaptiveRow(spacing: 6) {
                     Text("Also in:").font(Typeface.label(13))
                     ForEach(others, id: \.objectID) { category in
                         Button(category.displayName) { alsoIn = category }
@@ -243,7 +280,7 @@ struct WordEditorView: View {
                 }
             }
 
-            HStack(spacing: 10) {
+            AdaptiveRow {
                 if word.isReviewable {
                     Button {
                         repository.setInReview([word], !word.inReview)
@@ -258,6 +295,7 @@ struct WordEditorView: View {
                     .buttonStyle(OutlineChunkyButtonStyle(color: Palette.cherry))
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .card()
     }
 

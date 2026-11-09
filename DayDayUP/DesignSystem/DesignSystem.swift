@@ -95,18 +95,81 @@ struct OutlineChunkyButtonStyle: ButtonStyle {
     var color: Color = Palette.grape
 
     func makeBody(configuration: Configuration) -> some View {
+        OutlineChunkyButton(configuration: configuration, color: color)
+    }
+}
+
+private struct OutlineChunkyButton: View {
+    let configuration: ButtonStyleConfiguration
+    let color: Color
+    /// Set by AdaptiveRow when it stacks its buttons, so they line up at full width.
+    @Environment(\.stretchesButtons) private var stretches
+
+    var body: some View {
         let pressed = configuration.isPressed
         return configuration.label
             .font(Typeface.title(16))
             .foregroundColor(color)
             .padding(.horizontal, 16)
-            .frame(minHeight: 44)
+            .frame(maxWidth: stretches ? .infinity : nil, minHeight: 44)
             .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Palette.surface))
             .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Palette.line, lineWidth: 2))
             .offset(y: pressed ? 3 : 0)
             .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Palette.line).offset(y: 3))
             .padding(.bottom, 3)
             .animation(.spring(response: 0.18, dampingFraction: 0.6), value: pressed)
+    }
+}
+
+// MARK: - Adaptive layout
+
+private struct StretchesButtonsKey: EnvironmentKey { static let defaultValue = false }
+
+extension EnvironmentValues {
+    var stretchesButtons: Bool {
+        get { self[StretchesButtonsKey.self] }
+        set { self[StretchesButtonsKey.self] = newValue }
+    }
+}
+
+/// Puts its views side by side when they fit on one line, otherwise one under another, with outlined
+/// buttons at full width. Used where a pane can get narrow (the Mac word inspector).
+/// macOS 12 has no ViewThatFits, so there it always stacks.
+struct AdaptiveRow<Content: View>: View {
+    var spacing: CGFloat = 10
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        if #available(macOS 13.0, iOS 16.0, *) {
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: spacing) { content }.lineLimit(1)
+                stacked
+            }
+        } else {
+            stacked
+        }
+    }
+
+    private var stacked: some View {
+        VStack(alignment: .leading, spacing: spacing) { content }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .environment(\.stretchesButtons, true)
+    }
+}
+
+/// A text field that wraps onto more lines as the text grows, instead of scrolling out of sight.
+/// Needs macOS 13 / iOS 16; older systems get a one-line field.
+struct GrowingTextField: View {
+    let title: String
+    @Binding var text: String
+    var maxLines = 4
+
+    var body: some View {
+        if #available(macOS 13.0, iOS 16.0, *) {
+            TextField(title, text: $text, axis: .vertical).lineLimit(1...maxLines)
+        } else {
+            TextField(title, text: $text)
+        }
     }
 }
 
